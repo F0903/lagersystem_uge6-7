@@ -3,5 +3,4 @@
 from db.db import Db
 
 if __name__ == "__main__":
-    db = Db()
-    
+    db = Db(user="root", password="root", host="localhost", database="lager")
