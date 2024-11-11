@@ -1,7 +1,8 @@
+# class managing a connection to a MySQL database
 
 import mysql.connector as sql
 
-from utils import singleton
+from utils import singleton as singleton
 
 @singleton
 class Db:
@@ -9,8 +10,8 @@ class Db:
         self.con = sql.MySQLConnection(user, password, host, database)
         self.unregister_singleton()
 
-    def close():
-        pass 
+    def close(self):
+        self.connection.close() 
     
     def get():
         pass #todo
