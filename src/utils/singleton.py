@@ -10,7 +10,14 @@ def singleton(cls):
         cls.unregister_singleton = lambda: instances.clear()
 
         if cls not in instances:
-            instances[cls] = cls(*args, **kwargs)
+            instance = cls(*args, **kwargs)
+            instances[cls] = instance
         return instances[cls]
 
+    def unregister_singleton():
+        """Reset the singleton instance."""
+        instances.pop(cls)
+        print()
+
+    get_instance.unregister_singleton = unregister_singleton
     return get_instance
