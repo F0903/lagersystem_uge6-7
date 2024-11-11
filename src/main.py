@@ -5,9 +5,10 @@ from models.product import Clothing
 from product_manager import ProductManager
 
 if __name__ == "__main__":
-    db = Db()
+    # db = Db()
 
     pm = ProductManager()
     o = pm.new_product("Clothing")
+    
     print(o.get_sql_values())
     

@@ -6,12 +6,12 @@ import datetime
 
 @dataclass
 class Product: # abstract?
-    ID: int # product ID
-    Name: str
-    Description: str
-    Quantity: int # in storage / in stock
-    Price: float
-    CreatedAt: datetime.datetime
+    ID: int = 0 # product ID
+    Name: str = ""
+    Description: str = ""
+    Quantity: int = 0 # in storage / in stock
+    Price: float = 0.0
+    CreatedAt: datetime.datetime = None
 
     def get_sql_values(self):
         """
@@ -22,9 +22,9 @@ class Product: # abstract?
 
 # for example
 class Clothing(Product):
-    Material: str # could be an enum clothes_materials = Cotton, Polyester, etc etc
-    Size: str
-    Color: str
+    Material: str = '' # could be an enum clothes_materials = Cotton, Polyester, etc etc
+    Size: str = ''
+    Color: str = ''
 
     def get_sql_values(self):
         """

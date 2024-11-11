@@ -2,7 +2,7 @@
 
 import mysql.connector as sql
 
-from utils import singleton as singleton
+from utils.singleton import singleton
 
 
 @singleton
