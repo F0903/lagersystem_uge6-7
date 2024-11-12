@@ -11,13 +11,17 @@ class Product: # abstract?
     Description: str = ""
     Quantity: int = 0 # in storage / in stock
     Price: float = 0.0
-    CreatedAt: datetime.datetime = None
+    CreatedAt: datetime.datetime = datetime.datetime.now()
 
     def get_sql_values(self):
         """
         Returns a tuple of the product's fields, minus it's ID
         """
-        return (self.Name, self.Description, self.Quantity, self.Price, self.CreatedAt)
+        t = []
+        for k, v in self.__dict__.items():
+            if k != "ID":
+                t.append(v)
+        return tuple(t)
 
 
 # for example
@@ -26,19 +30,26 @@ class Clothing(Product):
     Size: str = ''
     Color: str = ''
 
+    # WIP
     def get_sql_values(self):
         """
         Returns a tuple of the product's fields, minus it's ID
         """
-        return (*super().get_sql_values(), self.Material, self.Size, self.Color)
+        t = []
+        for k, v in self.__dict__.items():
+            if k != "ID":
+                t.append(v)
+        return super().get_sql_values() + tuple(t)
+        # return (*super().get_sql_values(), self.Material, self.Size, self.Color)
 
 
 # for example 2
 class Book(Product):
-    Genre: str
+    Page_count = int = 0
+    Genre: str = ""
 
-    def get_sql_values(self):
-        """
-        Returns a tuple of the product's fields, minus it's ID
-        """
-        return (*super().get_sql_values(), self.Genre)
+    # def get_sql_values(self):
+    #     """
+    #     Returns a tuple of the product's fields, minus it's ID
+    #     """
+    #     return (*super().get_sql_values(), self.Genre)

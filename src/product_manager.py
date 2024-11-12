@@ -14,21 +14,21 @@ class ProductManager:
         Returns a new, empty instance of a product of the given type.
         """
         creator = self._get_creator(type)
-        return creator(self)
+        return creator
         
     def _get_creator(self, type):
         if type == 'Clothing':
-            return self._create_clothing
+            return self._create_clothing()
         elif type == 'Book':
-            return self._create_book
+            return self._create_book()
         else:
             raise ValueError(type) # idk
         
     def _create_clothing(self):
-        p.Clothing()
+        return p.Clothing()
 
     def _create_book(self):
-        p.Book()
+        return p.Book()
     ###
 
     # basic database operations:
