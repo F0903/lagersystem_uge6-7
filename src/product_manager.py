@@ -1,7 +1,8 @@
 # class doing administrative tasks on our products
 
 import models.product as p
-from db.db import Db
+from db.db_connection import DbConnection
+
 
 # TODO
 class ProductManager:
@@ -15,20 +16,21 @@ class ProductManager:
         """
         creator = self._get_creator(type)
         return creator(self)
-        
+
     def _get_creator(self, type):
-        if type == 'Clothing':
+        if type == "Clothing":
             return self._create_clothing
-        elif type == 'Book':
+        elif type == "Book":
             return self._create_book
         else:
-            raise ValueError(type) # idk
-        
+            raise ValueError(type)  # idk
+
     def _create_clothing(self):
         p.Clothing()
 
     def _create_book(self):
         p.Book()
+
     ###
 
     # basic database operations:
@@ -38,7 +40,7 @@ class ProductManager:
         Add a product to the database
         """
         # get database connection
-        db = Db()
+        db = DbConnection()
 
         # make product object query-able
 
@@ -71,11 +73,9 @@ class ProductManager:
         # query database
         pass
 
-
     # others?:
 
     def get_products(self, of_type):
         pass
-
 
     pass
