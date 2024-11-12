@@ -23,12 +23,14 @@ class DbConnection:
     def close(self):
         self._con.close()
 
-    def get_cursor(self):
+    def get_cursor(
+        self, *, buffered: bool = False, dictionary: bool = False
+    ) -> sql.connection.MySQLCursor:
         """
         Returns MySQL cursor for internal use. (caller must dispose)
         """
 
-        return self._con.cursor()
+        return self._con.cursor(buffered=buffered or dictionary, dictionary=dictionary)
 
     def commit(self):
         self._con.commit()

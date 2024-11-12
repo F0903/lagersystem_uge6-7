@@ -3,7 +3,7 @@
 from db.db_connection import DbConnection
 from db.db_migrator import migrate_db
 from db.adapters.products_adapter import ProductAdapter
-from models.product import Clothing, ProductDescriptor
+from models.products import ProductFactory, Clothing, ProductDescriptor
 import logging
 
 LOG = logging.getLogger()
@@ -27,19 +27,8 @@ def main():
     db = DbConnection(user="root", password="root", host="localhost", database="lager")
     migrate_db(db, "migrations/")
 
-    test_product = Clothing(
-        "Garbage bag",
-        "XL",
-        "Black",
-        Descriptor=ProductDescriptor(
-            ID=0,
-            Name="Cut garbage bag",
-            Description="Yes",
-            Quantity=1,
-            Price=1.05,
-        ),
-    )
-    ProductAdapter(db).insert_product(test_product)
+    for product in ProductAdapter(db).get_all_products(None):
+        print(f"{product}")
 
 
 if __name__ == "__main__":

@@ -22,17 +22,3 @@ class ProductDescriptor:
 @dataclass(kw_only=True)
 class Product:
     Descriptor: ProductDescriptor
-
-
-@dataclass
-class Clothing(Product):
-    Material: str = (
-        ""  # could be an enum clothes_materials = Cotton, Polyester, etc etc
-    )
-    Size: str = ""
-    Color: str = ""
-
-
-@dataclass
-class Book(Product):
-    Genre: str
