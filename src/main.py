@@ -6,6 +6,7 @@ from db.adapters.products_adapter import ProductAdapter
 from models.products import ProductFactory, Clothing, ProductDescriptor
 import logging
 
+# Setup the root logger
 LOG = logging.getLogger()
 LOG.setLevel(logging.DEBUG)
 
