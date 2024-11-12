@@ -25,31 +25,15 @@ class Product: # abstract?
 
 
 # for example
+@dataclass
 class Clothing(Product):
     Material: str = '' # could be an enum clothes_materials = Cotton, Polyester, etc etc
     Size: str = ''
     Color: str = ''
 
-    # WIP
-    def get_sql_values(self):
-        """
-        Returns a tuple of the product's fields, minus it's ID
-        """
-        t = []
-        for k, v in self.__dict__.items():
-            if k != "ID":
-                t.append(v)
-        return super().get_sql_values() + tuple(t)
-        # return (*super().get_sql_values(), self.Material, self.Size, self.Color)
-
 
 # for example 2
+@dataclass
 class Book(Product):
-    Page_count = int = 0
+    Page_count: int = 0
     Genre: str = ""
-
-    # def get_sql_values(self):
-    #     """
-    #     Returns a tuple of the product's fields, minus it's ID
-    #     """
-    #     return (*super().get_sql_values(), self.Genre)

@@ -6,9 +6,8 @@ from db.db import Db
 # TODO
 class ProductManager:
 
-    # TODO this is pseudo-code-y right now
-    # factory design pattern to create new products
-    # lending from https://realpython.com/factory-method-python/#introducing-factory-method
+    ### factory design pattern to create new products
+    # inspired by https://realpython.com/factory-method-python/#introducing-factory-method
     def new_product(self, type):
         """
         Returns a new, empty instance of a product of the given type.
