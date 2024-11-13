@@ -6,6 +6,7 @@ import datetime
 # from src.models.products.factories.product_factory import ProductFactory
 from src.models.products.factories.product_factory import create_product
 from src.models.products.product import Product, ProductDescriptor
+from src.models.products.clothing import Clothing
 
 
 class TestProduct(unittest.TestCase):
@@ -23,6 +24,10 @@ class TestProduct(unittest.TestCase):
     def test_create_product(self):
         p_obj = create_product("Product", self.desc)
         self.assertEqual(p_obj, Product(Descriptor=self.desc))
+
+    def test_create_product_sub(self):
+        c_obj = create_product("Clothing", self.desc, Material="", Size="", Color="")
+        self.assertEqual(c_obj, Clothing(Descriptor=self.desc, Material="", Size="", Color=""))
 
     # def test_get_sql_values(self):
     #     vals = self.product.get_sql_values()
