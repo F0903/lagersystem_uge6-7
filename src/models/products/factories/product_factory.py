@@ -1,4 +1,4 @@
-import models.products as products
+from ... import products
 
 
 def create_product(

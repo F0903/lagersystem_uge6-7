@@ -1,8 +1,11 @@
 # class managing a connection to a MySQL database
 
 import mysql.connector as sql
-
 from utils.singleton import singleton
+
+DB_USER = "root"
+DB_PASSWORD = "root"
+DB_HOST = "localhost"
 
 
 @singleton
@@ -11,8 +14,10 @@ class DbConnection:
     A class representing a single Database connection.
     """
 
-    def __init__(self, user: str, password: str, host: str, database: str) -> None:
-        self._con = sql.MySQLConnection(user=user, password=password, host=host)
+    def __init__(self, database: str) -> None:
+        self._con = sql.MySQLConnection(
+            user=DB_USER, password=DB_PASSWORD, host=DB_HOST
+        )
         self._assert_database(database)
 
     def _assert_database(self, database_name: str):
