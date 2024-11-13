@@ -12,8 +12,16 @@ class ProductFactory:
         Returns:
             The new product instance.
         """
+
         try:
+            # Dynamically get the class type by name from the products module.
+            # So for example, if the "type" string is "Clothing", it will return
+            # the Clothing type.
             product_class = getattr(products, type)
-            return product_class(Descriptor=descriptor, **extra_attributes)
+
+            # Create an instance of the type we just got.
+            product_instance = product_class(Descriptor=descriptor, **extra_attributes)
+
+            return product_instance
         except AttributeError:
             raise ValueError(f"Unknown product type: {type}")
