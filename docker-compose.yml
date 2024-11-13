@@ -1,0 +1,15 @@
+services:
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: Simbaersod1988
+      MYSQL_DATABASE: lager
+  app:
+    build: .
+    depends_on:
+      - db
+    environment:
+      DB_USER: root
+      DB_PASSWORD: Simbaersod1988
+      DB_HOST: localhost
+      DB_DATABASE: lager
