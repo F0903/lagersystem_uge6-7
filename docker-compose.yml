@@ -2,7 +2,7 @@ services:
   db:
     image: mysql:5.7
     environment:
-      MYSQL_ROOT_PASSWORD: Simbaersod1988
+      MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: lager
   app:
     build: .
@@ -10,6 +10,6 @@ services:
       - db
     environment:
       DB_USER: root
-      DB_PASSWORD: Simbaersod1988
+      DB_PASSWORD: root
       DB_HOST: localhost
       DB_DATABASE: lager
