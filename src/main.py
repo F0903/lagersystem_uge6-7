@@ -3,7 +3,7 @@
 from db.db_connection import DbConnection
 from db.db_migrator import migrate_db
 from db.adapters.products_adapter import ProductAdapter
-from models.products import ProductFactory, Clothing, ProductDescriptor
+from models.products import Clothing, ProductDescriptor
 import logging
 
 # Setup the root logger
@@ -28,7 +28,10 @@ def main():
     db = DbConnection(user="root", password="root", host="localhost", database="lager")
     migrate_db(db, "migrations/")
 
-    for product in ProductAdapter(db).get_all_products(None):
+    # Get the "interface" for the products in the database
+    products = ProductAdapter(db)
+
+    for product in products.get_all_products(None):
         print(f"{product}")
 
 
