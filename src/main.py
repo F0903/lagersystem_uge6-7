@@ -1,5 +1,5 @@
 # main script to interact with a product management system
-
+import os
 from db.db_connection import DbConnection
 from db.db_migrator import migrate_db
 from db.adapters.products_adapter import ProductAdapter
@@ -25,7 +25,19 @@ LOG.addHandler(console_handler)
 
 
 def main():
-    db = DbConnection(user="root", password="root", host="localhost", database="lager")
+    is_docker = os.environ.get("DOCKER", False)
+    if is_docker:
+        user = os.environ["DB_USER"]
+        password = os.environ["DB_PASSWORD"]
+        host = os.environ["DB_HOST"]
+        database = os.environ["DB_DATABASE"]
+    else:
+        user = "root"
+        password = "root"
+        host = "localhost"
+        database = "lager"
+
+    db = DbConnection(user, password, host, database)
     migrate_db(db, "migrations/")
 
     for product in ProductAdapter(db).get_all_products(None):
