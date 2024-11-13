@@ -7,6 +7,10 @@ from utils.singleton import singleton
 
 @singleton
 class DbConnection:
+    """
+    A class representing a single Database connection.
+    """
+
     def __init__(self, user: str, password: str, host: str, database: str) -> None:
         self._con = sql.MySQLConnection(user=user, password=password, host=host)
         self._assert_database(database)
@@ -33,4 +37,7 @@ class DbConnection:
         return self._con.cursor(buffered=buffered or dictionary, dictionary=dictionary)
 
     def commit(self):
+        """
+        Commit changes to the database.
+        """
         self._con.commit()

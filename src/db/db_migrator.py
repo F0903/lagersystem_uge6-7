@@ -13,6 +13,7 @@ def _execute_sql_script(db_cursor, script_path: path.Path):
     Thanks mysql-connector for not having a built-in execute script function.
     """
 
+    # We have to go through the SQL script manually and seperate statements by the ';' character.
     with open(script_path, encoding="utf-8") as f:
         statement_buf = ""
         for line in f:

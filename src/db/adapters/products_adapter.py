@@ -1,14 +1,21 @@
 import dataclasses
 from typing import Any, Generator, Iterable
 from db.db_connection import DbConnection
-from models.products import Product, ProductDescriptor, ProductFactory
+from models.products import Product, ProductDescriptor
 import mysql.connector as sql
+
+from models.products.factories.product_factory import create_product
 
 PRODUCT_TABLE_NAME = "products"
 PRODUCT_ATTRIBUTE_TABLE_NAME = "product_attributes"
 
 
 class ProductAdapter:
+    """
+    An "adapter" that goes on top of the databse so provide a better API for
+    operations regarding products.
+    """
+
     def __init__(self, db: DbConnection) -> None:
         self._db = db
 
@@ -105,7 +112,5 @@ class ProductAdapter:
 
                 product_type = row["Type"]
                 attributes = self._get_attributes(cur, descriptor.ID)
-                product = ProductFactory.create_product(
-                    product_type, descriptor, **attributes
-                )
+                product = create_product(product_type, descriptor, **attributes)
                 yield product
