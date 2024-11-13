@@ -25,7 +25,7 @@ LOG.addHandler(console_handler)
 
 
 def main():
-    db = DbConnection(user="root", password="Simbaersod1988", host="localhost", database="lager")
+    db = DbConnection(user="root", password="root", host="localhost", database="lager")
     migrate_db(db, "migrations/")
 
     for product in ProductAdapter(db).get_all_products(None):
