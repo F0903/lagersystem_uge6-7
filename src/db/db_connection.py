@@ -1,7 +1,9 @@
 # class managing a connection to a MySQL database
 
+
 import mysql.connector as sql
 from utils.singleton import singleton
+from .db_cursor import DbMySQLCursor
 
 DB_USER = "root"
 DB_PASSWORD = "root"
@@ -34,12 +36,17 @@ class DbConnection:
 
     def get_cursor(
         self, *, buffered: bool = False, dictionary: bool = False
-    ) -> sql.connection.MySQLCursor:
+    ) -> DbMySQLCursor:
         """
         Returns MySQL cursor for internal use. (caller must dispose)
         """
 
-        return self._con.cursor(buffered=buffered or dictionary, dictionary=dictionary)
+        real_cursor = self._con.cursor(
+            buffered=buffered or dictionary, dictionary=dictionary
+        )
+
+        wrapper = DbMySQLCursor(real_cursor)
+        return wrapper
 
     def commit(self):
         """
