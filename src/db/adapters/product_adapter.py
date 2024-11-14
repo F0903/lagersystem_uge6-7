@@ -1,10 +1,10 @@
 import dataclasses
 from typing import Any, Generator, Iterable
-from db.db_connection import DbConnection
 from models.products import Product, ProductDescriptor
 import mysql.connector as sql
 
-from models.products.factories.product_factory import create_product
+from models.products import create_product_from_descriptor
+from ..db_connection import DbConnection
 
 PRODUCT_TABLE_NAME = "products"
 PRODUCT_ATTRIBUTE_TABLE_NAME = "product_attributes"
@@ -44,14 +44,65 @@ class ProductAdapter:
             )
 
             # Then for each attribute, add an attribute row in the db.
-            for i, attribute in enumerate(attrs.items()):
-                # Skip the first one (the Descriptor, we used that earlier)
-                if i == 0:
+            for name, value in attrs.items():
+                # Skip the Descriptor
+                if name == "Descriptor":
                     continue
-                name, value = attribute
                 cur.execute(
                     f"INSERT INTO {PRODUCT_ATTRIBUTE_TABLE_NAME} VALUES (LAST_INSERT_ID(), %s, %s)",
                     (name, value),
+                )
+
+        self._db.commit()
+
+    def update_product(self, product: Product):
+        """
+        Updates the product in the database.
+        """
+
+        # Transform dataclass to dictionary of field name -> value.
+        attrs = dataclasses.asdict(product)
+        descriptor = attrs["Descriptor"]
+        product_id = descriptor["ID"]
+
+        with self._db.get_cursor() as cur:
+            # Update the manually set parts of the products table
+            cur.execute(
+                f"""
+                UPDATE products
+                SET
+                    Name = %s,
+                    Description = %s,
+                    Quantity = %s,
+                    Price = %s
+                WHERE
+                    ID = %s;
+                """,
+                (
+                    descriptor["Name"],
+                    descriptor["Description"],
+                    descriptor["Quantity"],
+                    descriptor["Price"],
+                    product_id,
+                ),
+            )
+
+            # Now set the other attribute values (if they exist for the product)
+            for name, value in attrs.items():
+                # Skip the Descriptor, which we have already done stuff with.
+                if name == "Descriptor":
+                    continue
+
+                cur.execute(
+                    f"""
+                    UPDATE product_attributes
+                    SET
+                        AttributeValue = %s
+                    WHERE
+                        ProductID = %s AND
+                        AttributeName = %s
+                    """,
+                    (value, product_id, name),
                 )
 
         self._db.commit()
@@ -87,6 +138,7 @@ class ProductAdapter:
         """
 
         # Important to get the cursor as a dictionary cursor.
+        # otherwise we can't get values by column name.
         with self._db.get_cursor(dictionary=True) as cur:
 
             # Determine whether we need to filter or not.
@@ -100,17 +152,8 @@ class ProductAdapter:
             # Get our products
             products = cur.fetchall()
             for row in products:
-                descriptor = ProductDescriptor(
-                    ID=row["ID"],
-                    Name=row["Name"],
-                    Description=row["Description"],
-                    Quantity=row["Quantity"],
-                    Price=row["Price"],
-                    CreatedAt=row["CreatedAt"],
-                    LastUpdatedAt=row["LastUpdatedAt"],
-                )
+                descriptor = ProductDescriptor.create_from_dict(row)
 
-                product_type = row["Type"]
                 attributes = self._get_attributes(cur, descriptor.ID)
-                product = create_product(product_type, descriptor, **attributes)
+                product = create_product_from_descriptor(descriptor, **attributes)
                 yield product
