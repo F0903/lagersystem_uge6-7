@@ -1,5 +1,5 @@
 import os
-from db.db_connection import DbConnection
+from .db_connection import DbConnection
 import pathlib as path
 import logging
 
