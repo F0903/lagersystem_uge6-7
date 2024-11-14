@@ -32,6 +32,7 @@ def main():
         host = os.environ["DB_HOST"]
         database = os.environ["DB_DATABASE"]
     else:
+        print("Not running in Docker environment")
         user = "root"
         password = "root"
         host = "localhost"
