@@ -1,3 +1,3 @@
 # TODO
 
-- Create small script to run migrations.
+- <https://trello.com/c/yYqnLA0M>
