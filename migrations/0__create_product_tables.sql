@@ -16,8 +16,8 @@ CREATE TABLE IF NOT EXISTS products (
 -- Table for dynamic product attributes
 CREATE TABLE IF NOT EXISTS product_attributes (
     ProductID INT,
-    AttributeName VARCHAR(255),
-    AttributeValue VARCHAR(255),
+    AttributeName VARCHAR(255) NOT NULL,
+    AttributeValue VARCHAR(255) NOT NULL,
     CONSTRAINT fkProductId FOREIGN KEY (ProductID) REFERENCES products(ID),
     -- Make sure there is only one unique paring of the product id and attribute name.
     CONSTRAINT uqProductAttribute UNIQUE (ProductID, AttributeName)
