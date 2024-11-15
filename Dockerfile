@@ -12,4 +12,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Kør scriptet når containeren starter
-CMD ["python", "main.py"]# Vælg en base image
+CMD ["python", "src/main.py"]
