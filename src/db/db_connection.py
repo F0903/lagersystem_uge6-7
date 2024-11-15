@@ -1,14 +1,25 @@
 # class managing a connection to a MySQL database
 
-import mysql.connector as sql
 
+import mysql.connector as sql
 from utils.singleton import singleton
+from .db_cursor import DbMySQLCursor
+
+DB_USER = "root"
+DB_PASSWORD = "root"
+DB_HOST = "localhost"
 
 
 @singleton
 class DbConnection:
-    def __init__(self, user: str, password: str, host: str, database: str) -> None:
-        self._con = sql.MySQLConnection(user=user, password=password, host=host)
+    """
+    A class representing a single Database connection.
+    """
+
+    def __init__(self, database: str) -> None:
+        self._con = sql.MySQLConnection(
+            user=DB_USER, password=DB_PASSWORD, host=DB_HOST
+        )
         self._assert_database(database)
 
     def _assert_database(self, database_name: str):
@@ -25,12 +36,20 @@ class DbConnection:
 
     def get_cursor(
         self, *, buffered: bool = False, dictionary: bool = False
-    ) -> sql.connection.MySQLCursor:
+    ) -> DbMySQLCursor:
         """
         Returns MySQL cursor for internal use. (caller must dispose)
         """
 
-        return self._con.cursor(buffered=buffered or dictionary, dictionary=dictionary)
+        real_cursor = self._con.cursor(
+            buffered=buffered or dictionary, dictionary=dictionary
+        )
+
+        wrapper = DbMySQLCursor(real_cursor)
+        return wrapper
 
     def commit(self):
+        """
+        Commit changes to the database.
+        """
         self._con.commit()

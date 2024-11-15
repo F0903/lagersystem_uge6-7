@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from models.products.product import Product
+from .product import Product
 
 
 @dataclass(kw_only=True)

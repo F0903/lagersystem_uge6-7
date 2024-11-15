@@ -2,26 +2,9 @@
 import os
 from db.db_connection import DbConnection
 from db.db_migrator import migrate_db
-from db.adapters.products_adapter import ProductAdapter
-from models.products import ProductFactory, Clothing, ProductDescriptor
-import logging
-
-# Setup the root logger
-LOG = logging.getLogger()
-LOG.setLevel(logging.DEBUG)
-
-# Create a console handler (prints logs to terminal)
-console_handler = logging.StreamHandler()
-console_handler.setLevel(logging.DEBUG)
-
-# Create a formatter and set it for the console handler
-console_handler_formatter = logging.Formatter(
-    "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
-console_handler.setFormatter(console_handler_formatter)
-
-# Add the console handler to the logger
-LOG.addHandler(console_handler)
+from db.adapters.product_adapter import ProductAdapter
+from models.products import Clothing, ProductDescriptor
+from webserver.api import api
 
 
 def main():
@@ -38,11 +21,18 @@ def main():
         host = "localhost"
         database = "lager"
 
+    #TODO: 
     db = DbConnection(user, password, host, database)
     migrate_db(db, "migrations/")
 
-    for product in ProductAdapter(db).get_all_products(None):
+    # Get the "api" for the products in the database
+    products = ProductAdapter(db)
+
+    # Just a test for fun
+    for product in products.get_all_products(None):
         print(f"{product}")
 
+    api.run()
+    
 if __name__ == "__main__":
     main()
