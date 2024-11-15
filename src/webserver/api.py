@@ -2,8 +2,9 @@ from typing import Any
 from flask import Flask, Request, jsonify, request, Response
 from db.adapters.product_adapter import ProductAdapter
 from db.db_connection import DbConnection
-from models.products import Product, ProductDescriptor, create_product_from_dict
+from models.products import Product, DbItemDescriptor
 import db.db_error as db_err
+from models.products.product import DatabaseProduct
 
 api = Flask(__name__)
 db = DbConnection("lager")
@@ -43,7 +44,7 @@ def _validate_product_request(request: Request) -> tuple[Response, int] | dict:
 
 
 @api.route("/api/get/products")
-def get_products() -> list[Product]:
+def get_products() -> list[DatabaseProduct]:
     product_iter = product_adapter.get_all_products(None)
     # We need to return a list and not an iterator.
     return list(product_iter)
@@ -59,7 +60,7 @@ def add_product():
     if isinstance(assert_result, tuple):  # Is result an error response tuple?
         return assert_result
 
-    product = create_product_from_dict(assert_result)
+    product = Product.create_from_dict(assert_result)
 
     try:
         product_adapter.insert_product(product)
@@ -78,7 +79,7 @@ def set_product():
     if isinstance(assert_result, tuple):  # Is result an error response tuple?
         return assert_result
 
-    product = create_product_from_dict(assert_result)
+    product = Product.create_from_dict(assert_result)
 
     try:
         product_adapter.update_product(product)

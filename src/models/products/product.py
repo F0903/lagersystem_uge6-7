@@ -1,53 +1,22 @@
 # classes detailing products in the storage system
 
 from dataclasses import dataclass
-import datetime
 from typing import Any, Self
 
+from db.db_item_descriptor import DbItemDescriptor
 
-# A smarter method of doing this would probably be
-# using properties instead of docstring warnings,
-# but would also be more complex, so alas
-@dataclass(kw_only=True)
-class ProductDescriptor:
+from .. import products
+
+
+def _get_product_class_dynamically(type: str):
     """
-    Dataclass that holds the most basic information about every product.
+    Dynamically get the class type by name from the products module.
+    So for example, if the "type" string is "Clothing", it will return
+    the Clothing type.
     """
 
-    ID: int
-    """**(DO NOT SET MANUALLY)** Handled by SQL """
-
-    Type: str
-    """**(DO NOT SET MANUALLY)** The type string, which is currently the name of the dataclass it's assocaited with."""
-
-    Name: str
-    Description: str
-    Quantity: int  # in storage / in stock
-    Price: float
-
-    CreatedAt: datetime.datetime
-    """**(DO NOT SET MANUALLY)** The date at which this record was created in the database. Handled by SQL"""
-
-    LastUpdatedAt: datetime.datetime
-    """**(DO NOT SET MANUALLY)** The date at which this record was updated in the database. Handled by SQL"""
-
-    @classmethod
-    def create_from_dict(cls, dict: dict[str, Any]) -> Self:
-        """
-        Factory method for creating a ProductDescriptor from a dictionary.
-        """
-
-        descriptor = cls(
-            ID=dict["ID"],
-            Type=dict["Type"],
-            Name=dict["Name"],
-            Description=dict["Description"],
-            Quantity=dict["Quantity"],
-            Price=dict["Price"],
-            CreatedAt=dict["CreatedAt"],
-            LastUpdatedAt=dict["LastUpdatedAt"],
-        )
-        return descriptor
+    product_class = getattr(products, type)
+    return product_class
 
 
 @dataclass(kw_only=True)
@@ -59,4 +28,53 @@ class Product:
     as only the Descriptor here needs to be ignored to get all the child fields.
     """
 
-    Descriptor: ProductDescriptor
+    Name: str
+    Description: str
+    Quantity: int  # in storage / in stock
+    Price: float
+
+    @classmethod
+    def create_from_dict(cls, dict: dict[str, Any]) -> Self:
+        """
+        Create the product dynamically fron a dictionary of fields.
+
+        Requires that it matches an existing product type.
+        """
+
+        # TODO: perhaps validate the keys in the dict?
+
+        # Get all other props in the dict that isn't "Descriptor"
+        base_fields = vars(Product)
+
+        other_props = {
+            key: value for key, value in dict.items() if key not in base_fields
+        }
+
+        product = Product.create(**other_props)
+
+        return product
+
+    @classmethod
+    def create(cls, type: str, **attributes) -> Self:
+        """
+        Dynamically get the product class from the "products" module by class name.
+
+        'extra_attributes' represents the additional arguments provided to the constructor of the class.
+
+        Returns:
+            The new product instance.
+        """
+
+        try:
+            product_class = _get_product_class_dynamically(type)
+            product_instance = product_class(**attributes)
+
+            return product_instance
+        except AttributeError:
+            raise ValueError(f"Unknown product type")
+
+
+@dataclass(kw_only=True)
+class DatabaseProduct:
+    Product: Product
+    Descriptor: DbItemDescriptor

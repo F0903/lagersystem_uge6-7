@@ -1,9 +1,9 @@
-import dataclasses
-from typing import Any, Generator, Iterable
-from models.products import Product, ProductDescriptor
+import dataclasses as dc
+from typing import Any, Iterable
+from models.products import Product, DbItemDescriptor
 import mysql.connector as sql
 
-from models.products import create_product_from_descriptor
+from models.products.product import DatabaseProduct
 from ..db_connection import DbConnection
 
 PRODUCT_TABLE_NAME = "products"
@@ -25,10 +25,7 @@ class ProductAdapter:
         """
 
         # Transform dataclass to dictionary of field name -> value.
-        attrs = dataclasses.asdict(product)
-
-        # Get the descriptor to be used for product
-        descriptor = attrs["Descriptor"]
+        attributes = dc.asdict(product)
 
         with self._db.get_cursor() as cur:
             # We first need to insert the product into the products table before the dynamic attributes.
@@ -36,18 +33,23 @@ class ProductAdapter:
                 f"INSERT INTO {PRODUCT_TABLE_NAME} VALUES (DEFAULT, %s, %s, %s, %s, %s, DEFAULT, DEFAULT)",
                 (
                     product.__class__.__name__,  # Use class name as the product type
-                    descriptor["Name"],
-                    descriptor["Description"],
-                    descriptor["Quantity"],
-                    descriptor["Price"],
+                    attributes["Name"],
+                    attributes["Description"],
+                    attributes["Quantity"],
+                    attributes["Price"],
                 ),
             )
 
+            # Get base fields for filtering that hopefully works :)
+            base_fields = vars(Product)
+
             # Then for each attribute, add an attribute row in the db.
-            for name, value in attrs.items():
+            for name, value in attributes.items():
                 # Skip the Descriptor
-                if name == "Descriptor":
+
+                if name in base_fields:
                     continue
+
                 cur.execute(
                     f"INSERT INTO {PRODUCT_ATTRIBUTE_TABLE_NAME} VALUES (LAST_INSERT_ID(), %s, %s)",
                     (name, value),
@@ -61,7 +63,7 @@ class ProductAdapter:
         """
 
         # Transform dataclass to dictionary of field name -> value.
-        attrs = dataclasses.asdict(product)
+        attrs = dc.asdict(product)
         descriptor = attrs["Descriptor"]
         product_id = descriptor["ID"]
 
@@ -107,7 +109,7 @@ class ProductAdapter:
 
         self._db.commit()
 
-    def _get_attributes(
+    def _get_extra_attributes(
         self, cursor: sql.connection.MySQLCursor, product_id: int
     ) -> dict[str, Any]:
         """
@@ -129,7 +131,7 @@ class ProductAdapter:
 
         return attributeDict
 
-    def get_all_products(self, type: str | None) -> Iterable[Product]:
+    def get_all_products(self, type: str | None) -> Iterable[DatabaseProduct]:
         """
         Get all the matching products from the database.
 
@@ -152,8 +154,19 @@ class ProductAdapter:
             # Get our products
             products = cur.fetchall()
             for row in products:
-                descriptor = ProductDescriptor.create_from_dict(row)
+                descriptor = DbItemDescriptor.create_from_dict(row)
+                descriptor_fields = dc.asdict(descriptor)
 
-                attributes = self._get_attributes(cur, descriptor.ID)
-                product = create_product_from_descriptor(descriptor, **attributes)
-                yield product
+                attributes = self._get_extra_attributes(cur, descriptor.ID)
+
+                fields_to_add = {
+                    key: value
+                    for key, value in row.items()
+                    if key not in descriptor_fields
+                }
+                attributes.update(fields_to_add)
+                product = Product.create(descriptor.Type, **attributes)
+
+                db_product = DatabaseProduct(Product=product, Descriptor=descriptor)
+
+                yield db_product

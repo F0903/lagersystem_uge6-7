@@ -3,15 +3,13 @@
 
 services:
   db:
-    container_name: mydb
+    hostname: db
     image: mysql:5.7
     ports:
       - "32001:3306"
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: lager
   app:
-    container_name: app
     depends_on:
       - db
     build: .
@@ -21,5 +19,4 @@ services:
       DOCKER: true
       DB_USER: root
       DB_PASSWORD: root
-      DB_HOST: mydb
-      DB_DATABASE: lager
+      DB_HOST: db
