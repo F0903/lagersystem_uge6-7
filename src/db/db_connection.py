@@ -1,13 +1,10 @@
 # class managing a connection to a MySQL database
 
 
+import os
 import mysql.connector as sql
 from utils.singleton import singleton
 from .db_cursor import DbMySQLCursor
-
-DB_USER = "root"
-DB_PASSWORD = "root"
-DB_HOST = "localhost"
 
 
 @singleton
@@ -16,9 +13,17 @@ class DbConnection:
     A class representing a single Database connection.
     """
 
-    def __init__(self, database: str) -> None:
+    def __init__(
+        self,
+        user: str = None,
+        password: str = None,
+        host: str = None,
+        database: str = None,
+    ) -> None:
         self._con = sql.MySQLConnection(
-            user=DB_USER, password=DB_PASSWORD, host=DB_HOST
+            user=user,
+            password=password,
+            host=host,
         )
         self._assert_database(database)
 

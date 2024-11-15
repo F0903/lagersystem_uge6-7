@@ -2,7 +2,6 @@
 
 import unittest
 
-from src.models.products.factories.product_factory import create_product
 from src.models.products.product import Product, DbItemDescriptor
 from src.models.products.clothing import Clothing
 

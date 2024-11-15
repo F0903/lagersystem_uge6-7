@@ -9,14 +9,18 @@ from webserver.api import api
 
 def main():
     is_docker = os.environ.get("DOCKER", False)
+
     if is_docker:
-        db_con.DB_USER = os.environ["DB_USER"]
-        db_con.DB_PASSWORD = os.environ["DB_PASSWORD"]
-        db_con.DB_HOST = os.environ["DB_HOST"]
+        user = os.environ["DB_USER"]
+        password = os.environ["DB_PASSWORD"]
+        host = os.environ["DB_HOST"]
     else:
         print("Not running in Docker environment")
+        user = "root"
+        password = "root"
+        host = "localhost"
 
-    db = DbConnection("lager")
+    db = DbConnection(user, password, host, "lager")
     migrate_db(db, "migrations/")
 
     # Get the "api" for the products in the database

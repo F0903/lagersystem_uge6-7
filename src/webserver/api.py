@@ -7,8 +7,6 @@ import db.db_error as db_err
 from models.products.product import DatabaseProduct
 
 api = Flask(__name__)
-db = DbConnection("lager")
-product_adapter = ProductAdapter(db)
 
 
 def _validate_product_fields(
@@ -45,6 +43,9 @@ def _validate_product_request(request: Request) -> tuple[Response, int] | dict:
 
 @api.route("/api/get/products")
 def get_products() -> list[DatabaseProduct]:
+    db = DbConnection()
+    product_adapter = ProductAdapter(db)
+
     product_iter = product_adapter.get_all_products(None)
     # We need to return a list and not an iterator.
     return list(product_iter)
@@ -55,6 +56,9 @@ def add_product():
     """
     Insert a product defined by the body of this request.
     """
+
+    db = DbConnection()
+    product_adapter = ProductAdapter(db)
 
     assert_result = _validate_product_request(request)
     if isinstance(assert_result, tuple):  # Is result an error response tuple?
@@ -74,6 +78,9 @@ def set_product():
     """
     Replace a particular product by ID with the body of this request.
     """
+
+    db = DbConnection()
+    product_adapter = ProductAdapter(db)
 
     assert_result = _validate_product_request(request)
     if isinstance(assert_result, tuple):  # Is result an error response tuple?
