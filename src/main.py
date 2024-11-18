@@ -1,7 +1,7 @@
 # main script to interact with a product management system
 import os
 from .db.db_connection import DbConnection
-from .db.db_migrator import migrate_db
+from .db.migrate import migrate_db
 from .db.adapters.product_adapter import ProductAdapter
 from .webserver.api import api
 

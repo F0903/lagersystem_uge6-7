@@ -3,7 +3,7 @@
 from dataclasses import dataclass
 from typing import Any, Self
 
-from ...db.db_item_descriptor import DbItemDescriptor
+# For the getattr function
 from .. import products
 
 
@@ -60,9 +60,3 @@ class Product:
             return product_instance
         except AttributeError:
             raise ValueError(f"Unknown product type")
-
-
-@dataclass(kw_only=True)
-class DatabaseProduct:
-    Product: Product
-    Descriptor: DbItemDescriptor

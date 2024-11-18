@@ -3,14 +3,15 @@
 
 import unittest
 
-from src.db.db_migrator import migrate_db, _execute_sql_script
+from src.db.migrate import migrate_db, _execute_sql_script
 
 
 class Testdb_migrator(unittest.TestCase):
     def setUp(self):
         pass
+
     #     self.desc = ProductDescriptor(
-    #         ID=None, 
+    #         ID=None,
     #         Name="",
     #         Description="",
     #         Quantity=0,
@@ -32,5 +33,5 @@ class Testdb_migrator(unittest.TestCase):
     #         fail = create_product("not a product", self.desc)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
