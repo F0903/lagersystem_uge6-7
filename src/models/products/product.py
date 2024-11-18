@@ -3,7 +3,7 @@
 from dataclasses import dataclass
 from typing import Any, Self
 
-from ...db.db_item_descriptor import DbItemDescriptor
+from db.db_item_descriptor import DbItemDescriptor
 
 from .. import products
 
@@ -33,8 +33,8 @@ class Product:
     Quantity: int  # in storage / in stock
     Price: float
 
-    @classmethod
-    def create_from_dict(cls, dict: dict[str, Any]) -> Self:
+    @staticmethod
+    def create_from_dict(type: str, dict: dict[str, Any]) -> Self:
         """
         Create the product dynamically fron a dictionary of fields.
 
@@ -50,12 +50,12 @@ class Product:
             key: value for key, value in dict.items() if key not in base_fields
         }
 
-        product = Product.create(cls.__name__, **other_props)
+        product = Product.create(type, **other_props)
 
         return product
 
-    @classmethod
-    def create(cls, type: str, **attributes) -> Self:
+    @staticmethod
+    def create(type: str, **attributes) -> Self:
         """
         Dynamically get the product class from the "products" module by class name.
 

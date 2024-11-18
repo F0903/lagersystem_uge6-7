@@ -6,7 +6,8 @@ from typing import Any, Self
 @dataclass(kw_only=True)
 class DbItemDescriptor:
     """
-    Dataclass that holds the most basic information about every product.
+    Dataclass that holds extra fields that are spcific to the
+    Product when stored as a row in the database, such as ID and datestamps
     """
 
     ID: int
