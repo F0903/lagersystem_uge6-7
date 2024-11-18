@@ -39,18 +39,7 @@ class Product:
 
         Requires that it matches an existing product type.
         """
-
-        # TODO: perhaps validate the keys in the dict?
-
-        # Get all other props in the dict that isn't "Descriptor"
-        base_fields = vars(Product)
-
-        other_props = {
-            key: value for key, value in dict.items() if key not in base_fields
-        }
-
-        product = Product.create(type, **other_props)
-
+        product = Product.create(type, **dict)
         return product
 
     @staticmethod

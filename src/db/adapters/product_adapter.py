@@ -1,8 +1,9 @@
-import dataclasses as dc
+import dataclasses
 from typing import Any, Iterable
 import mysql.connector as sql
 from ...models.products import Product, DbItemDescriptor, DatabaseProduct
-from ..db_connection import DbConnection
+from ..db_connection import DbConnection, DbMySQLCursor
+from ..db_error import IdNotPresentError
 
 PRODUCT_TABLE_NAME = "products"
 PRODUCT_ATTRIBUTE_TABLE_NAME = "product_attributes"
@@ -17,18 +18,24 @@ class ProductAdapter:
     def __init__(self, db: DbConnection) -> None:
         self._db = db
 
+    def _assert_id_exists(self, cursor: DbMySQLCursor, id: int):
+        cursor.execute(f"SELECT * FROM `{PRODUCT_TABLE_NAME}` WHERE ID = %s", (id,))
+        results = cursor.fetchall()
+        if not results:
+            raise IdNotPresentError()
+
     def insert_product(self, product: Product):
         """
         Inserts the product into the products table.
         """
 
         # Transform dataclass to dictionary of field name -> value.
-        attributes = dc.asdict(product)
+        attributes = dataclasses.asdict(product)
 
         with self._db.get_cursor() as cur:
             # We first need to insert the product into the products table before the dynamic attributes.
             cur.execute(
-                f"INSERT INTO {PRODUCT_TABLE_NAME} VALUES (DEFAULT, %s, %s, %s, %s, %s, DEFAULT, DEFAULT)",
+                f"INSERT INTO `{PRODUCT_TABLE_NAME}` VALUES (DEFAULT, %s, %s, %s, %s, %s, DEFAULT, DEFAULT)",
                 (
                     product.__class__.__name__,  # Use class name as the product type
                     attributes["Name"],
@@ -38,8 +45,9 @@ class ProductAdapter:
                 ),
             )
 
-            # Get base fields for filtering. (we only want fields from subclasses here)
-            base_fields = vars(Product)
+            # The base fields of the Product class.
+            # Used to filter for the fields in subclasses.
+            base_fields = [x.name for x in dataclasses.fields(Product)]
 
             # Then for each attribute, add an attribute row in the db.
             for name, value in attributes.items():
@@ -49,11 +57,9 @@ class ProductAdapter:
                     continue
 
                 cur.execute(
-                    f"INSERT INTO {PRODUCT_ATTRIBUTE_TABLE_NAME} VALUES (LAST_INSERT_ID(), %s, %s)",
+                    f"INSERT INTO `{PRODUCT_ATTRIBUTE_TABLE_NAME}` VALUES (LAST_INSERT_ID(), %s, %s)",
                     (name, value),
                 )
-
-        self._db.commit()
 
     def update_product(self, id: int, product: Product):
         """
@@ -61,13 +67,15 @@ class ProductAdapter:
         """
 
         # Transform dataclass to dictionary of field name -> value.
-        attrs = dc.asdict(product)
+        attrs = dataclasses.asdict(product)
 
         with self._db.get_cursor() as cur:
+            self._assert_id_exists(cur, id)
+
             # Update the manually set parts of the products table
             cur.execute(
                 f"""
-                UPDATE products
+                UPDATE `{PRODUCT_TABLE_NAME}`
                 SET
                     Name = %s,
                     Description = %s,
@@ -85,9 +93,9 @@ class ProductAdapter:
                 ),
             )
 
-            base_fields = [x.name for x in dc.fields(Product)]
-            for f in base_fields:
-                print(f)
+            # The base fields of the Product class.
+            # Used to filter for the fields in subclasses.
+            base_fields = [x.name for x in dataclasses.fields(Product)]
 
             # Now set the other attribute values (if they exist for the product)
             for name, value in attrs.items():
@@ -97,7 +105,7 @@ class ProductAdapter:
 
                 cur.execute(
                     f"""
-                    UPDATE product_attributes
+                    UPDATE `{PRODUCT_ATTRIBUTE_TABLE_NAME}`
                     SET
                         AttributeValue = %s
                     WHERE
@@ -107,8 +115,6 @@ class ProductAdapter:
                     (value, id, name),
                 )
 
-        self._db.commit()
-
     def _get_extra_attributes(
         self, cursor: sql.connection.MySQLCursor, product_id: int
     ) -> dict[str, Any]:
@@ -117,7 +123,7 @@ class ProductAdapter:
         """
 
         cursor.execute(
-            f"SELECT * FROM {PRODUCT_ATTRIBUTE_TABLE_NAME} WHERE ProductID = %s",
+            f"SELECT * FROM `{PRODUCT_ATTRIBUTE_TABLE_NAME}` WHERE ProductID = %s",
             (product_id,),
         )
         attributes = cursor.fetchall()
@@ -145,17 +151,17 @@ class ProductAdapter:
 
             # Determine whether we need to filter or not.
             if type is None:
-                cur.execute(f"SELECT * FROM {PRODUCT_TABLE_NAME}")
+                cur.execute(f"SELECT * FROM `{PRODUCT_TABLE_NAME}`")
             else:
                 cur.execute(
-                    f"SELECT * FROM {PRODUCT_TABLE_NAME} WHERE Type = %s", (type,)
+                    f"SELECT * FROM `{PRODUCT_TABLE_NAME}` WHERE Type = %s", (type,)
                 )
 
             # Get our products
             products = cur.fetchall()
             for row in products:
                 descriptor = DbItemDescriptor.create_from_dict(row)
-                descriptor_fields = dc.asdict(descriptor)
+                descriptor_fields = dataclasses.asdict(descriptor)
 
                 attributes = self._get_extra_attributes(cur, descriptor.ID)
 

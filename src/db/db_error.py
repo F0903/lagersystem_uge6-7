@@ -27,6 +27,11 @@ class CantConnectError(DbError):
         super().__init__(message)
 
 
+class IdNotPresentError(DbError):
+    def __init__(self, message="The ID is not present in the database."):
+        super().__init__(message)
+
+
 # MySQL error codes
 DUPLICATE_ENTRY_ERROR = 1062
 SYNTAX_ERROR = 1064
