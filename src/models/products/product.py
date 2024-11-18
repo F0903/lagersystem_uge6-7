@@ -50,7 +50,7 @@ class Product:
             key: value for key, value in dict.items() if key not in base_fields
         }
 
-        product = Product.create(**other_props)
+        product = Product.create(cls.__name__, **other_props)
 
         return product
 
