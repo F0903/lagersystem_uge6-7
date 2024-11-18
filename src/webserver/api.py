@@ -73,8 +73,8 @@ def add_product():
 
 
 # We don't use a parameter, as we get the ID directly off of the body
-@api.route("/api/set/product/", methods=["PUT"])
-def set_product():
+@api.route("/api/set/product/<int:id>", methods=["PUT"])
+def set_product(id: int):
     """
     Replace a particular product by ID with the body of this request.
     """

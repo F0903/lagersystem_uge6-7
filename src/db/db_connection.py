@@ -3,7 +3,7 @@
 
 import os
 import mysql.connector as sql
-from ..utils.singleton import singleton
+from utils.singleton import singleton
 from .db_cursor import DbMySQLCursor
 
 
