@@ -1,10 +1,10 @@
 from typing import Any
 from flask import Flask, Request, jsonify, request, Response
-from db.adapters.product_adapter import ProductAdapter
-from db.db_connection import DbConnection
-from models.products import Product, DbItemDescriptor
-import db.db_error as db_err
-from models.products.product import DatabaseProduct
+from ..db.adapters.product_adapter import ProductAdapter
+from ..db.db_connection import DbConnection
+from ..models.products import Product, DbItemDescriptor
+from ..db import db_error as db_err
+from ..models.products.product import DatabaseProduct
 
 api = Flask(__name__)
 
@@ -16,7 +16,7 @@ def _validate_product_fields(
     Validate that the request data has the minimum required fields.
     """
 
-    required_fields = ["Descriptor"]
+    required_fields = ["Type", "Product"]
     if not all(field in product_data for field in required_fields):
         return (
             jsonify(
@@ -64,7 +64,9 @@ def add_product():
     if isinstance(assert_result, tuple):  # Is result an error response tuple?
         return assert_result
 
-    product = Product.create_from_dict(assert_result)
+    type_str = assert_result["Type"]
+    product_dict = assert_result["Product"]
+    product = Product.create_from_dict(type_str, product_dict)
 
     try:
         product_adapter.insert_product(product)
@@ -86,9 +88,11 @@ def set_product(id: int):
     if isinstance(assert_result, tuple):  # Is result an error response tuple?
         return assert_result
 
-    product = Product.create_from_dict(assert_result)
+    type_str = assert_result["Type"]
+    product_dict = assert_result["Product"]
+    product = Product.create_from_dict(type_str, product_dict)
 
     try:
-        product_adapter.update_product(product)
+        product_adapter.update_product(id, product)
     except db_err.DbError as err:
         return jsonify({"error": err.message}, 400)

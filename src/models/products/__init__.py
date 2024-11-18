@@ -2,4 +2,4 @@
 
 from .book import Book
 from .clothing import Clothing
-from .product import Product, DbItemDescriptor
+from .product import Product, DbItemDescriptor, DatabaseProduct

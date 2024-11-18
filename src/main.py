@@ -1,10 +1,9 @@
 # main script to interact with a product management system
 import os
-import db.db_connection as db_con
-from db.db_connection import DbConnection
-from db.db_migrator import migrate_db
-from db.adapters.product_adapter import ProductAdapter
-from webserver.api import api
+from .db.db_connection import DbConnection
+from .db.db_migrator import migrate_db
+from .db.adapters.product_adapter import ProductAdapter
+from .webserver.api import api
 
 
 def main():

@@ -3,8 +3,7 @@
 from dataclasses import dataclass
 from typing import Any, Self
 
-from db.db_item_descriptor import DbItemDescriptor
-
+from ...db.db_item_descriptor import DbItemDescriptor
 from .. import products
 
 

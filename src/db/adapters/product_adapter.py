@@ -1,9 +1,7 @@
 import dataclasses as dc
 from typing import Any, Iterable
-from models.products import Product, DbItemDescriptor
 import mysql.connector as sql
-
-from models.products.product import DatabaseProduct
+from ...models.products import Product, DbItemDescriptor, DatabaseProduct
 from ..db_connection import DbConnection
 
 PRODUCT_TABLE_NAME = "products"
@@ -40,7 +38,7 @@ class ProductAdapter:
                 ),
             )
 
-            # Get base fields for filtering that hopefully works :)
+            # Get base fields for filtering. (we only want fields from subclasses here)
             base_fields = vars(Product)
 
             # Then for each attribute, add an attribute row in the db.
@@ -57,15 +55,13 @@ class ProductAdapter:
 
         self._db.commit()
 
-    def update_product(self, product: Product):
+    def update_product(self, id: int, product: Product):
         """
         Updates the product in the database.
         """
 
         # Transform dataclass to dictionary of field name -> value.
         attrs = dc.asdict(product)
-        descriptor = attrs["Descriptor"]
-        product_id = descriptor["ID"]
 
         with self._db.get_cursor() as cur:
             # Update the manually set parts of the products table
@@ -81,18 +77,22 @@ class ProductAdapter:
                     ID = %s;
                 """,
                 (
-                    descriptor["Name"],
-                    descriptor["Description"],
-                    descriptor["Quantity"],
-                    descriptor["Price"],
-                    product_id,
+                    attrs["Name"],
+                    attrs["Description"],
+                    attrs["Quantity"],
+                    attrs["Price"],
+                    id,
                 ),
             )
 
+            base_fields = [x.name for x in dc.fields(Product)]
+            for f in base_fields:
+                print(f)
+
             # Now set the other attribute values (if they exist for the product)
             for name, value in attrs.items():
-                # Skip the Descriptor, which we have already done stuff with.
-                if name == "Descriptor":
+                # Skip the base fields in Product.
+                if name in base_fields:
                     continue
 
                 cur.execute(
@@ -104,7 +104,7 @@ class ProductAdapter:
                         ProductID = %s AND
                         AttributeName = %s
                     """,
-                    (value, product_id, name),
+                    (value, id, name),
                 )
 
         self._db.commit()
