@@ -71,11 +71,11 @@ class TestProducts(unittest.TestCase):
 
     # create_from_dict()
     def test_create_from_dict(self):
-        obj = p.Product.create_from_dict(self.product_dict)
+        obj = p.Product.create_from_dict(Type="Product", self.product_dict)
         self.assertEqual(obj, self.product)
 
     def test_create_from_dict_subclass(self):
-        obj = p.Product.create_from_dict(self.clothing_dict)
+        obj = p.Product.create_from_dict(Type="Clothing", self.clothing_dict)
         self.assertEqual(obj, self.clothing)
 
     def test_create_from_dict_bad_dict(self):
