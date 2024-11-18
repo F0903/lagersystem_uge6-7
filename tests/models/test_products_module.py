@@ -6,81 +6,56 @@ from src.models import products as p
 
 
 class TestProducts(unittest.TestCase):
+    config_product = dict(
+        Name="product", 
+        Description="description", 
+        Quantity=1, 
+        Price=1.00
+    )
+    config_clothing = dict(
+        Name="clothing", 
+        Description="description", 
+        Quantity=1, 
+        Price=1.00, 
+        Material="cotton", 
+        Size="L", 
+        Color="blue"
+    )
+
     def setUp(self):
         # example instances from products module, 
         # created "traditionally" using their constructors
-        self.product = p.Product(
-            Name="product", 
-            Description="description", 
-            Quantity=1, 
-            Price=1.00)
-        self.clothing = p.Clothing(
-            Name="clothing", 
-            Description="description", 
-            Quantity=1, 
-            Price=1.00, 
-            Material="cotton", 
-            Size="L", 
-            Color="blue")
-        
-        # dicts of the example instances' parameters
-        self.product_dict = dict(
-            Name=self.product.Name,
-            Description=self.product.Description,
-            Quantity=self.product.Quantity,
-            Price=self.product.Price
-        )
-        self.clothing_dict = dict(
-            Name=self.clothing.Name,
-            Description=self.clothing.Description,
-            Quantity=self.clothing.Quantity,
-            Price=self.clothing.Price,
-            Material=self.clothing.Material,
-            Size=self.clothing.Size,
-            Color=self.clothing.Color
-        )
+        self.product = p.Product(**self.config_product)
+        self.clothing = p.Clothing(**self.config_clothing)
     
     # create()
     def test_create(self):
-        obj = p.Product.create(
-            "Product", 
-            Name=self.product.Name,
-            Description=self.product.Description,
-            Quantity=self.product.Quantity,
-            Price=self.product.Price)
+        obj = p.Product.create("Product", **self.config_product)
         # is the object returned equal to self.product?
         self.assertEqual(obj, self.product)
 
     def test_create_subclass(self):
-        obj = p.Product.create(
-            "Clothing", 
-            Name=self.clothing.Name,
-            Description=self.clothing.Description,
-            Quantity=self.clothing.Quantity,
-            Price=self.clothing.Price,
-            Material=self.clothing.Material,
-            Size=self.clothing.Size,
-            Color=self.clothing.Color)
+        obj = p.Product.create("Clothing", **self.config_clothing)
         # is the same true for a subclass of Product?
         self.assertEqual(obj, self.clothing)
 
     def test_create_bad_type(self):
         with self.assertRaises(ValueError):
-            p.Product.create("Not a valid product type", Name="", Description="", Quantity=0, Price=0.0)
+            p.Product.create("This is not a valid product type", Name="", Description="", Quantity=0, Price=0.0)
 
 
     # create_from_dict()
     def test_create_from_dict(self):
-        obj = p.Product.create_from_dict(Type="Product", self.product_dict)
+        obj = p.Product.create_from_dict("Product", self.config_product)
         self.assertEqual(obj, self.product)
 
     def test_create_from_dict_subclass(self):
-        obj = p.Product.create_from_dict(Type="Clothing", self.clothing_dict)
+        obj = p.Product.create_from_dict("Clothing", self.config_clothing)
         self.assertEqual(obj, self.clothing)
 
     def test_create_from_dict_bad_dict(self):
         with self.assertRaises(ValueError):
-            p.Product.create_from_dict({"Not a valid products class dict": "Not at all"})
+            p.Product.create_from_dict({"This dict contains invalid keys, such as this one!": "Who cares"})
 
 
     # _get_product_class_dynamically()
