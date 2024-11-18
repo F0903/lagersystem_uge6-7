@@ -53,9 +53,13 @@ class TestProducts(unittest.TestCase):
         obj = p.Product.create_from_dict("Clothing", self.config_clothing)
         self.assertEqual(obj, self.clothing)
 
-    def test_create_from_dict_bad_dict(self):
+    def test_create_from_dict_bad_type(self):
         with self.assertRaises(ValueError):
-            p.Product.create_from_dict({"This dict contains invalid keys, such as this one!": "Who cares"})
+            p.Product.create_from_dict("This is not a valid product type", self.config_product)
+
+    def test_create_from_dict_bad_dict(self):
+        with self.assertRaises(KeyError):
+            p.Product.create_from_dict("Product", {"This dict contains invalid keys, such as this one!": "Who cares"})
 
 
     # _get_product_class_dynamically()
