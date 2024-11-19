@@ -1,43 +1,44 @@
-# unit tests of DbConnection class, 
-# also tests of singleton implementation
+# unit tests of DbConnection class
+# since this class is very simple this is mostly just a test of its singleton propety
 
 import unittest
 
 from src.db.db_connection import DbConnection
 
+from tests.config import db_config
+
 
 class TestDbConnection(unittest.TestCase):
-    config = dict(
-        user = "my username",
-        password = "my secret",
-        host = "my machine",
-        database = "my database"
-    )
-
     def setUp(self):
-        self.db_conn = DbConnection(**self.config)
+        self.db_conn = DbConnection(**db_config)
 
-    # _assert_database()
+    def tearDown(self):
+        with self.db_conn.get_cursor() as cur:
+            cur.execute(f"DROP DATABASE IF EXISTS `{db_config["database"]}`")
 
-    # close()
-
-    # get_cursor()
-
-    # commit()
 
     # singleton-ness
     def test_singleton(self):
         """Testing that attempts to create new DbConnection instances return the already existing one"""
-        new = DbConnection(user="Despite many changes", password="I remain eternal")
+        new = DbConnection(user="New user", password="New password", host="New host", database="New database")
         self.assertEqual(new, self.db_conn)
 
     def test_singleton_unregister(self):
         """Testing that singleton can be reset and remade with new parameters"""
+        new_db = "new_test_db"
         DbConnection.unregister_singleton()
-        self.db_conn = DbConnection(user="I was reset a moment ago")
-        self.assertNotEqual(self.db_conn.user, self.config["user"])
+        self.db_conn = DbConnection(
+            user=db_config["user"], 
+            password=db_config["password"], 
+            host=db_config["host"], 
+            database=new_db
+            )
+        with self.db_conn.get_cursor() as cur:
+            cur.execute("SHOW DATABASES")
+            result = [databases[0] for databases in cur.fetchall()]
+            self.assertIn(new_db, result)
+            cur.execute(f"DROP DATABASE `{new_db}`")
         
-
 
 if __name__ == '__main__':
     unittest.main()
