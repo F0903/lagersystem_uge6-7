@@ -2,11 +2,12 @@
 
 - Fix tests
 
+## Testing TODO
 
-### testing todos:
 unit tests for:
-- [X] db/db_item_descriptor
-- [X] models/products module
+
+- [x] db/db_item_descriptor
+- [x] models/products module
 - [/!] db/adapters/product_adapter --- cant test without mysql server
 - [/!] db/db_connection --- cant test without mysql server
 - [/!] db/db_migrator --- cant test without mysql server
@@ -15,6 +16,7 @@ unit tests for:
 options: create new database exclusively for testing, OR mock the database connection
 
 maybe unit tests for:
+
 - db/db_cursor
 - db/db_error
 
