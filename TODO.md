@@ -1,5 +1,6 @@
 # TODO
 
+- Optimize performance
 - Fix tests
 
 ## Testing TODO
