@@ -26,9 +26,18 @@ def get_products(filter: str | None):
 @api.command()
 @click.option(
     "--id",
+    required=True,
+    help="The ID of the product to retrieve.",
 )
 def get_product(id: str | None):
-    pass
+    response = requests.get(f"{URL_BASE}/api/product/{id}")
+    if response.status_code != 200:
+        click.echo(
+            f"Error. Response was nok 200 (OK). Response was: {response.status_code}\n{response.content}",
+            err=True,
+        )
+    product = response.json()
+    click.echo(product)
 
 
 @api.command()
