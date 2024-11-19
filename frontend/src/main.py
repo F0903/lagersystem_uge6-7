@@ -136,8 +136,6 @@ def add_product(type: str, product: dict[str, str]):
     Field arguments are specified as described, with a space between: 'name=value'
     """
 
-    # TODO: perhaps check that these fields are correct before sending?
-
     body = {"Type": type, "Product": product}
     response = requests.post(f"{URL_BASE}/api/product", json=body)
     if response.status_code != 200:
