@@ -158,7 +158,3 @@ def delete_product(id: str | None):
         _print_bad_response(response)
 
     click.echo("Product deleted successfully!")
-
-
-if __name__ == "__main__":
-    api()
