@@ -5,21 +5,16 @@ import unittest
 
 from src.db.db_connection import DbConnection
 
+from tests.config import db_config
+
 
 class TestDbConnection(unittest.TestCase):
-    config = dict(
-        user = "root",
-        password = "Velkommen24",
-        host = "localhost",
-        database = "test_db"
-    )
-
     def setUp(self):
-        self.db_conn = DbConnection(**self.config)
+        self.db_conn = DbConnection(**db_config)
 
     def tearDown(self):
         with self.db_conn.get_cursor() as cur:
-            cur.execute(f"DROP DATABASE IF EXISTS `{self.config["database"]}`")
+            cur.execute(f"DROP DATABASE IF EXISTS `{db_config["database"]}`")
 
 
     # singleton-ness
@@ -30,12 +25,12 @@ class TestDbConnection(unittest.TestCase):
 
     def test_singleton_unregister(self):
         """Testing that singleton can be reset and remade with new parameters"""
-        new_db = "new_db"
+        new_db = "new_test_db"
         DbConnection.unregister_singleton()
         self.db_conn = DbConnection(
-            user=self.config["user"], 
-            password=self.config["password"], 
-            host=self.config["host"], 
+            user=db_config["user"], 
+            password=db_config["password"], 
+            host=db_config["host"], 
             database=new_db
             )
         with self.db_conn.get_cursor() as cur:
