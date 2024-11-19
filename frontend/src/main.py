@@ -1,10 +1,15 @@
 import click
 import requests
+import json
 from .utils import _args_to_dict
 
 HOST = "localhost"
 PORT = 5000
 URL_BASE = f"http://{HOST}:{PORT}"
+
+
+def _pretty_print_json(json_dict: dict):
+    click.echo(json.dumps(json_dict, indent=2))
 
 
 def _print_bad_response(response):
@@ -45,8 +50,7 @@ def get_products(filter: str | None):
     response = requests.get(f"{URL_BASE}/api/products", params=filter_query)
     body = response.json()
 
-    # TODO: pretty print the JSON response?
-    click.echo(body)
+    _pretty_print_json(body)
 
 
 @api.command()
@@ -63,7 +67,8 @@ def get_product(id: str):
     product = _get_product_json(id)
     if not product:
         return
-    click.echo(product)
+
+    _pretty_print_json(product)
 
 
 @api.command()
