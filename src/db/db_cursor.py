@@ -1,6 +1,6 @@
 import mysql.connector as sql
 from typing import Any, Self
-from .db_error import ERROR_MAP
+from .error import ERROR_MAP
 from mysql.connector.errors import Error
 
 

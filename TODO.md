@@ -5,8 +5,8 @@
     - tests/db/db_connection.py
     - tests/db/adapters/product_adapter.py
 
+## Testing TODO
 
-### testing todos:
 unit tests for:
 - [X] db/db_item_descriptor
 - [X] models/products module
@@ -18,6 +18,7 @@ unit tests for:
 options: create new database exclusively for testing, OR mock the database connection
 
 maybe unit tests for:
+
 - db/db_cursor
 - db/db_error
 

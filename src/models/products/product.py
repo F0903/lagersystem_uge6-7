@@ -3,7 +3,7 @@
 from dataclasses import dataclass
 from typing import Any, Self
 
-from ...db.db_item_descriptor import DbItemDescriptor
+# For the getattr function
 from .. import products
 
 
@@ -39,18 +39,7 @@ class Product:
 
         Requires that it matches an existing product type.
         """
-
-        # TODO: perhaps validate the keys in the dict?
-
-        # Get all other props in the dict that isn't "Descriptor"
-        base_fields = vars(Product)
-
-        other_props = {
-            key: value for key, value in dict.items() if key not in base_fields
-        }
-
-        product = Product.create(type, **other_props)
-
+        product = Product.create(type, **dict)
         return product
 
     @staticmethod
@@ -71,9 +60,3 @@ class Product:
             return product_instance
         except AttributeError:
             raise ValueError(f"Unknown product type")
-
-
-@dataclass(kw_only=True)
-class DatabaseProduct:
-    Product: Product
-    Descriptor: DbItemDescriptor
