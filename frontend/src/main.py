@@ -14,6 +14,18 @@ def _print_error(response):
     )
 
 
+def _get_product_json(id: str) -> dict | None:
+    """
+    Get product from the server with ID, and turn response into JSON dict.
+    """
+
+    response = requests.get(f"{URL_BASE}/api/product/{id}")
+    if response.status_code != 200:
+        _print_error(response)
+        return None
+    return response.json()
+
+
 @click.group("api")
 def api():
     pass
@@ -40,11 +52,9 @@ def get_products(filter: str | None):
     help="The ID of the product to retrieve.",
 )
 def get_product(id: str):
-    response = requests.get(f"{URL_BASE}/api/product/{id}")
-    if response.status_code != 200:
-        _print_error(response)
+    product = _get_product_json(id)
+    if not product:
         return
-    product = response.json()
     click.echo(product)
 
 
@@ -55,13 +65,37 @@ def get_product(id: str):
     help="The ID of the product to set.",
 )
 @click.argument(
-    "product",
+    "product_fields",
     nargs=-1,
     callback=_args_to_dict,
 )
 def set_product(id: str, product_fields: dict[str, str]):
-    # TODO: get the product first from the server, then modify the fields with the ones in 'product_fields'
-    pass
+    # First we get the product as it is now.
+    product = _get_product_json(id)
+    if not product:
+        return
+
+    db_item = product[0]
+    descriptor = db_item["Descriptor"]
+
+    product_type = descriptor["Type"]
+    product = db_item["Product"]
+
+    # Go through the common keys in each
+    common_keys = [x for x in product_fields.keys() if x in product]
+    for key in common_keys:
+        value = product_fields[key]
+        product[key] = value
+        click.echo(f"Set field '{key}' = '{value}'")
+
+    # Now send the modified product
+    body = {"Type": product_type, "Product": product}
+    response = requests.put(f"{URL_BASE}/api/product/{id}", json=body)
+    if response.status_code != 200:
+        _print_error(response)
+        return
+
+    click.echo("Product updated successfully!")
 
 
 @api.command()
@@ -77,20 +111,28 @@ def set_product(id: str, product_fields: dict[str, str]):
 )
 def add_product(type: str, product: dict[str, str]):
     # TODO: perhaps check that these fields are correct before sending?
+
     body = {"Type": type, "Product": product}
     response = requests.post(f"{URL_BASE}/api/product", json=body)
     if response.status_code != 200:
         _print_error(response)
         return
-    click.echo("Success!")
+
+    click.echo("Product added successfully!")
 
 
 @api.command()
 @click.option(
     "--id",
+    required=True,
+    help="The ID of the product to delete.",
 )
 def delete_product(id: str | None):
-    pass
+    response = requests.delete(f"{URL_BASE}/api/product/{id}")
+    if response.status_code != 200:
+        _print_error(response)
+
+    click.echo("Product deleted successfully!")
 
 
 if __name__ == "__main__":

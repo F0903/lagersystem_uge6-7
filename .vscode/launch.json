@@ -16,6 +16,14 @@
       "request": "launch",
       "module": "src.main",
       "cwd": "${workspaceFolder}/frontend/"
+    },
+    {
+      "name": "Python Debugger: Debug frontend 'set-product' with args.",
+      "type": "debugpy",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/frontend/",
+      "module": "src.main",
+      "args": ["set-product", "--id", "1", "Name=TestName", "Color=White"]
     }
   ]
 }
