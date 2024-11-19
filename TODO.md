@@ -7,13 +7,12 @@
 unit tests for:
 - [X] db/db_item_descriptor
 - [X] models/products module
-- [X/] db/db_connection --- has some tests, dont think more are relevant?
+- [X] db/db_connection --- has some tests, dont think more are relevant?
 - [X] db/adapters/product_adapter
-- [] db/migrate
-- [] webserver/api
+- [/] webserver/api
+- [] test for frontend eventually (thumbs up)
 
 maybe unit tests for:
 - db/cursor
 - db/error
-
-integration test script with and without docker?
+- db/migrate
