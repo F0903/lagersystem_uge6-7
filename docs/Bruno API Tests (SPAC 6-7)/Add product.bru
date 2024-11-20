@@ -1,0 +1,26 @@
+meta {
+  name: Add product
+  type: http
+  seq: 4
+}
+
+post {
+  url: http://localhost:5000/api/product
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "Type": "Clothing",
+    "Product": {
+      "Color": "Blue",
+      "Description": "A blue shirt",
+      "Material": "Wool",
+      "Name": "The blue shirt",
+      "Price": "2.10",
+      "Quantity": 5,
+      "Size": "L"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "spac week 6-7",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

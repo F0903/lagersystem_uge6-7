@@ -1,0 +1,30 @@
+meta {
+  name: Set product
+  type: http
+  seq: 3
+}
+
+put {
+  url: http://localhost:5000/api/product/:id
+  body: json
+  auth: none
+}
+
+params:path {
+  id: 2
+}
+
+body:json {
+  {
+    "Type": "Clothing",
+    "Product": {
+      "Color": "Red",
+      "Description": "A red shirt",
+      "Material": "Linen",
+      "Name": "The red shirt",
+      "Price": "2.00",
+      "Quantity": 1,
+      "Size": "XL"
+    }
+  }
+}
