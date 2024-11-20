@@ -201,6 +201,15 @@ class TestProductAdapter(unittest.TestCase):
             count += 1
         self.assertEqual(count, 1)
 
+    def test_get_all_products_bad_filter(self):
+        self.pa.insert_product(p.Product(**self.config_product))
+
+        items = self.pa.get_all_products(type="bad_filter_string")
+        count = 0
+        for _ in items:
+            count += 1
+        self.assertEqual(count, 0)
+
 
 if __name__ == '__main__':
     unittest.main()
