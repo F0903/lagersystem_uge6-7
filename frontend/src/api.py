@@ -3,7 +3,7 @@ import requests
 from .api_error import ApiResponseError, ApiError
 
 HOST = "localhost"
-PORT = 5000
+PORT = 8080
 URL_BASE = f"http://{HOST}:{PORT}"
 
 
