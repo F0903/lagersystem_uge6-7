@@ -1,7 +1,6 @@
 # class managing a connection to a MySQL database
 
 
-import os
 import mysql.connector as sql
 from ..utils.singleton import singleton
 from .db_cursor import DbMySQLCursor
@@ -18,12 +17,11 @@ class DbConnection:
         user: str = None,
         password: str = None,
         host: str = None,
+        port: int = 3306,
         database: str = None,
     ) -> None:
         self._con = sql.MySQLConnection(
-            user=user,
-            password=password,
-            host=host,
+            user=user, password=password, host=host, port=port
         )
         self._assert_database(database)
 

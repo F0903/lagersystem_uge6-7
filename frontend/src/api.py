@@ -1,9 +1,10 @@
 from typing import Callable
 import requests
 from .api_error import ApiResponseError, ApiError
+from .utils import get_local_ip
 
-HOST = "localhost"
-PORT = 8080
+HOST = get_local_ip()
+PORT = 50050
 URL_BASE = f"http://{HOST}:{PORT}"
 
 

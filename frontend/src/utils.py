@@ -1,5 +1,17 @@
 import json
 import click
+import socket
+
+
+def get_local_ip():
+    try:
+        # Connect to a public address and retrieve the local IP
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
+            s.connect(("1.1.1.1", 80))  # Connect to Cloudflare DNS
+            local_ip = s.getsockname()[0]
+        return local_ip
+    except Exception as e:
+        return f"Error: {e}"
 
 
 def print_bad_response(response):
