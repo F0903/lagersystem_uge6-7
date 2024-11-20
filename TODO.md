@@ -10,7 +10,7 @@ unit tests for:
 - [X] models/products module
 - [X] db/db_connection --- has some tests, dont think more are relevant?
 - [X] db/adapters/product_adapter
-- [/] webserver/api
+- [x] webserver/api
 - [] test for frontend eventually (thumbs up)
 
 maybe unit tests for:
