@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="lager",
-    version="0.1.0",
+    version="1.0.0",
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
@@ -10,7 +10,7 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "lager = src.main:api",
+            "lager = src.cli:cli",
         ],
     },
 )
