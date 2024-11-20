@@ -52,7 +52,7 @@ def get_products() -> list[DatabaseProduct]:
     try:
         product_iter = product_adapter.get_all_products(type_filter)
     except db_err.DbError as err:
-        return jsonify({"error": err.message}, 400)
+        return jsonify({"error": err.message}), 400
     # We need to return a list and not an iterator.
     return list(product_iter)
 
@@ -65,7 +65,7 @@ def get_product(id: int):
     try:
         product = product_adapter.get_product(id)
     except db_err.DbError as err:
-        return jsonify({"error": err.message}, 400)
+        return jsonify({"error": err.message}), 400
 
     return [product]
 
@@ -91,7 +91,7 @@ def add_product():
         product_adapter.insert_product(product)
         db.commit()
     except db_err.DbError as err:
-        return jsonify({"error": err.message}, 400)
+        return jsonify({"error": err.message}), 400
 
     return "Success"
 
@@ -118,7 +118,7 @@ def set_product(id: int):
         product_adapter.update_product(id, product)
         db.commit()
     except db_err.DbError as err:
-        return jsonify({"error": err.message}, 400)
+        return jsonify({"error": err.message}), 400
 
     return "Success"
 
@@ -132,6 +132,6 @@ def delete_product(id: int):
         product_adapter.delete_product(id)
         db.commit()
     except db_err.DbError as err:
-        return jsonify({"error": err.message}, 400)
+        return jsonify({"error": err.message}), 400
 
     return "Success"

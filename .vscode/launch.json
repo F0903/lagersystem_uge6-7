@@ -1,14 +1,29 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "Python Debugger: Module",
-            "type": "debugpy",
-            "request": "launch",
-            "module": "src.main"
-        }
-    ]
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Python Debugger: Run backend as module.",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "src.main"
+    },
+    {
+      "name": "Python Debugger: Run frontend as module.",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "src.main",
+      "cwd": "${workspaceFolder}/frontend/"
+    },
+    {
+      "name": "Python Debugger: Debug frontend 'set-product' with args.",
+      "type": "debugpy",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/frontend/",
+      "module": "src.main",
+      "args": ["set-product", "--id", "1", "Name=TestName", "Color=White"]
+    }
+  ]
 }
