@@ -92,6 +92,9 @@ def set_product(id: str, product_fields: dict[str, str]):
     help="The ID of the product to modify.",
 )
 def increment_quantity(id: str):
+    """
+    Increments the Quantity field of the product with the specified ID.
+    """
 
     def modifier(product: dict) -> dict:
         product["Quantity"] += 1
