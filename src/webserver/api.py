@@ -96,7 +96,6 @@ def add_product():
     return "Success"
 
 
-# We don't use a parameter, as we get the ID directly off of the body
 @api.route("/api/product/<int:id>", methods=["PUT"])
 def set_product(id: int):
     """
