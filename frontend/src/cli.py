@@ -91,13 +91,16 @@ def set_product(id: str, product_fields: dict[str, str]):
     required=True,
     help="The ID of the product to modify.",
 )
-def increment_quantity(id: str):
+@click.argument("amount", default=1)
+def add_quantity(id: str, amount: str):
     """
-    Increments the Quantity field of the product with the specified ID.
+    Modify the Quantity field of the product with the specified ID.
+
+    The default value for the amount is 1, but can be specified. If specifying a negative number, pass -- as an option before.
     """
 
     def modifier(product: dict) -> dict:
-        product["Quantity"] += 1
+        product["Quantity"] += amount
 
     try:
         api.modify_product(id, modifier)
