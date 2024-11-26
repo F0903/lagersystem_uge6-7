@@ -1,12 +1,18 @@
+import logging
 from typing import Any
 from flask import Flask, Request, jsonify, request, Response
+from flask_cors import CORS
 from ..models.products import Product
 from ..db.adapters.product_adapter import ProductAdapter
 from ..db.db_connection import DbConnection
 from ..db.db_product import DatabaseProduct
 from ..db import error as db_err
 
+
+LOG = logging.getLogger(__name__)
+
 api = Flask(__name__)
+CORS(api)
 
 
 def _validate_product_request_fields(
@@ -44,6 +50,8 @@ def _validate_product_request(request: Request) -> tuple[Response, int] | dict:
 
 @api.route("/api/products", methods=["GET"])
 def get_products() -> list[DatabaseProduct]:
+    LOG.debug(f"Received get products request: {request}")
+
     db = DbConnection()
     product_adapter = ProductAdapter(db)
 
@@ -59,6 +67,8 @@ def get_products() -> list[DatabaseProduct]:
 
 @api.route("/api/product/<int:id>", methods=["GET"])
 def get_product(id: int):
+    LOG.debug(f"Received get product request: {request}")
+
     db = DbConnection()
     product_adapter = ProductAdapter(db)
 
@@ -75,6 +85,8 @@ def add_product():
     """
     Insert a product defined by the body of this request.
     """
+
+    LOG.debug(f"Received add product request: {request}")
 
     assert_result = _validate_product_request(request)
     if isinstance(assert_result, tuple):  # Is result an error response tuple?
@@ -102,6 +114,8 @@ def set_product(id: int):
     Replace a particular product by ID with the body of this request.
     """
 
+    LOG.debug(f"Received set product request: {request}")
+
     assert_result = _validate_product_request(request)
     if isinstance(assert_result, tuple):  # Is result an error response tuple?
         return assert_result
@@ -124,6 +138,8 @@ def set_product(id: int):
 
 @api.route("/api/product/<int:id>", methods=["DELETE"])
 def delete_product(id: int):
+    LOG.debug(f"Received delete product request: {request}")
+
     db = DbConnection()
     product_adapter = ProductAdapter(db)
 

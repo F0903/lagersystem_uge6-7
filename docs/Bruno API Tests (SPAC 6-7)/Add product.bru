@@ -5,7 +5,7 @@ meta {
 }
 
 post {
-  url: http://localhost:5000/api/product
+  url: http://localhost:{{PORT}}/api/product
   body: json
   auth: none
 }
@@ -14,13 +14,13 @@ body:json {
   {
     "Type": "Clothing",
     "Product": {
-      "Color": "Blue",
-      "Description": "A blue shirt",
-      "Material": "Wool",
-      "Name": "The blue shirt",
-      "Price": "2.10",
-      "Quantity": 5,
-      "Size": "L"
+      "Name": "The white shirt.",
+      "Description": "A white shirt.",
+      "Price": 5.99,
+      "Quantity": 2,
+      "Color": "White",
+      "Material": "Cotton",
+      "Size": "M"
     }
   }
 }

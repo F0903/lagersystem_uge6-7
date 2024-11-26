@@ -4,8 +4,27 @@ from waitress import serve
 from .db.db_connection import DbConnection
 from .db.migrate import migrate_db
 from .webserver.api import api
+import logging
 
-DEBUG_SERVER = False
+DEBUG_SERVER = True
+
+loglevel = logging.DEBUG if DEBUG_SERVER else logging.INFO
+
+LOG = logging.getLogger()
+LOG.setLevel(loglevel)
+
+# Create a console handler (prints logs to terminal)
+console_handler = logging.StreamHandler()
+console_handler.setLevel(loglevel)
+
+# Create a formatter and set it for the console handler
+console_handler_formatter = logging.Formatter(
+    "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
+console_handler.setFormatter(console_handler_formatter)
+
+# Add the console handler to the logger
+LOG.addHandler(console_handler)
 
 
 def main():
@@ -31,10 +50,7 @@ def main():
     db = DbConnection(db_user, db_password, db_host, db_port, "lager")
     migrate_db(db, "migrations/")
 
-    if DEBUG_SERVER:
-        api.run(host=backend_host, port=backend_port)
-    else:
-        serve(api, host=backend_host, port=backend_port)
+    serve(api, host=backend_host, port=backend_port)
 
 
 if __name__ == "__main__":

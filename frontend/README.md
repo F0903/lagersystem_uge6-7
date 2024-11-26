@@ -1,16 +1,26 @@
-# Terminal frontend
+# Lagersystem frontend webapp
 
-The terminal frontend of the project. Interacts with the database backend by HTTP requests.
+The webapp frontend of the week 6-7 assignment.
 
-## Installation
+## Developing
 
-Before proceeding, make sure you have installed the requirements.txt
+Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
 
-To install the frontend CLI, you need to run `pip install .` in the directory of this README.
-You can also provide `pip install` with the flag `--editable` if developing, which means you don't have to run the command each time you modify the scripts.
+```bash
+npm run dev
 
-After this, the command `lager` will be available in your terminal.
+# or start the server and open the app in a new browser tab
+npm run dev -- --open
+```
 
-To view avaiable commands you can run `lager` with no arguments.
+## Building
 
-A `--help` option is also available for every command.
+To create a production version of your app:
+
+```bash
+npm run build
+```
+
+You can preview the production build with `npm run preview`.
+
+> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
