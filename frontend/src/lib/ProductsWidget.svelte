@@ -17,6 +17,12 @@
         await loadProducts();
     }
 
+    async function refresh() {
+        // Completely refresh from scratch
+        products = [];
+        await loadProducts();
+    }
+
     onMount(async () => {
         await loadProducts();
     });
@@ -24,7 +30,7 @@
 
 <div class="products-widget">
     <h2 class="title">Products</h2>
-    <button onclick={loadProducts}>Refresh</button>
+    <button onclick={refresh}>Refresh</button>
     <div class="products-container">
         {#await products}
             <span>loading...</span>

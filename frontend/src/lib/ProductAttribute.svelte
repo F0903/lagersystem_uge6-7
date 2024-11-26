@@ -1,23 +1,42 @@
 <script lang="ts">
-    let { attribute }: { attribute: Attribute } = $props();
+    let {
+        attribute = $bindable(),
+        editable,
+    }: { attribute: Attribute; editable: boolean } = $props();
+
+    function onValueBlur(event: FocusEvent) {
+        const target = event.target as HTMLElement;
+        const value = target.textContent;
+
+        if (value === null) {
+            console.error("value was null");
+            return;
+        }
+
+        attribute.Value = value;
+    }
 </script>
 
-<!-- TODO: make attribute editable -->
-<div class="attr-container">
-    <span class="name">
+<div class="attr-container" class:editable>
+    <span class="attr-name">
         {attribute.Name}:
-    </span>
-    <span class="value">
+    </span><br />
+    <span class="attr-value" contenteditable={editable} onblur={onValueBlur}>
         {attribute.Value}
     </span>
 </div>
 
 <style>
+    .attr-value {
+        min-height: 20px;
+    }
+    .attr-container.editable {
+        border: 2px dashed var(--secondary-color);
+    }
     .attr-container {
         background-color: var(--tertiary-color);
-
         margin: 5px 0px;
-        padding: 5px;
+        padding: 10px;
     }
 
     span {
