@@ -52,8 +52,6 @@
     .products-widget {
         background-color: var(--primary-color);
         padding: 20px;
-        border: 2px solid var(--secondary-color);
-        border-radius: 25px;
         width: fit-content;
     }
 

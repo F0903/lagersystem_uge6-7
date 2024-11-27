@@ -19,6 +19,7 @@
     async function onSubmit(event: SubmitEvent) {
         event.preventDefault();
 
+        // Construct form data from the form html element.
         const formData = new FormData(event.target as HTMLFormElement);
         console.log(formData);
 

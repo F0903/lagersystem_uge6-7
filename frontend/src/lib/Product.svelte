@@ -1,20 +1,21 @@
 <script lang="ts">
     import { deleteSingleProduct, setSingleProduct } from "./api";
     import type { DatabaseProduct } from "./models/DatabaseProduct";
+    import { constructProductFromAttributeList } from "./models/Product";
     import ProductAttribute from "./ProductAttribute.svelte";
 
     let { db_product }: { db_product: DatabaseProduct } = $props();
 
     const descriptor = db_product.Descriptor;
-    const product = $state(db_product.Product);
+    let product = db_product.Product;
 
     // Create attributes objects from each property on product.
     let attributes: Attribute[] = $state([]);
+    let oldAttributes: Attribute[] = [];
+
     Object.entries(product).forEach((attribute) => {
         attributes.push({ Name: attribute[0], Value: attribute[1] });
     });
-
-    let oldAttributes: Attribute[] = [];
 
     let editable = $state(false);
 
@@ -25,22 +26,25 @@
 
     async function startEditing() {
         oldAttributes = $state.snapshot(attributes);
+        console.log(oldAttributes);
         editable = true;
     }
 
     async function saveEdits() {
         editable = false;
-        console.log(attributes);
-        console.log(oldAttributes);
-        console.log(product);
+        let newProduct = constructProductFromAttributeList(
+            descriptor.Type,
+            attributes,
+        );
+        await setSingleProduct(descriptor.ID, newProduct, descriptor.Type);
+        product = newProduct;
     }
 
     async function discardEdits() {
         editable = false;
-        console.log(attributes);
+
+        // This just refuses to work, despite other values than this will actually work.
         attributes = oldAttributes;
-        console.log(oldAttributes);
-        console.log(attributes);
     }
 
     let htmlRoot: HTMLElement;

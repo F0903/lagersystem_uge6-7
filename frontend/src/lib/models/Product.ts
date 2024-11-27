@@ -14,7 +14,33 @@ export function getAttributesOfProductType(typ: string) {
     }
 }
 
+export function constructProductFromAttributeList(
+    product_type: string,
+    attributes: Attribute[]
+): Product {
+    let product;
+    switch (product_type) {
+        case "Product":
+            product = new Product();
+            break;
+        case "Clothing":
+            product = new Clothing();
+            break;
+        case "Book":
+            product = new Book();
+        default:
+            throw new Error(`Unknown product type: ${product_type}`);
+    }
+
+    attributes.forEach((attr) => {
+        product[attr.Name] = attr.Value;
+    });
+
+    return product;
+}
+
 export class Product {
+    [k: string]: string | number;
     Name!: string;
     Description!: string;
     Price!: string;
