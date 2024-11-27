@@ -12,6 +12,7 @@ from ..db import error as db_err
 LOG = logging.getLogger(__name__)
 
 api = Flask(__name__)
+api.json.sort_keys = False
 CORS(api)
 
 
