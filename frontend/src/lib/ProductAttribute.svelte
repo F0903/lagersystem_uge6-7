@@ -18,28 +18,41 @@
 </script>
 
 <div class="attr-container" class:editable>
-    <span class="attr-name">
+    <h3 class="attr-name">
         {attribute.Name}:
-    </span><br />
+    </h3>
     <span class="attr-value" contenteditable={editable} onblur={onValueBlur}>
         {attribute.Value}
     </span>
 </div>
 
 <style>
+    .attr-name {
+        padding-bottom: 5px;
+        border-bottom: 1px solid var(--secondary-color);
+        margin-top: 0px;
+        margin-bottom: 10px;
+    }
+
     .attr-value {
         min-height: 20px;
+        width: 100%;
     }
+
     .attr-container.editable {
         border: 2px dashed var(--secondary-color);
     }
+
     .attr-container {
         background-color: var(--tertiary-color);
         margin: 5px 0px;
         padding: 10px;
+
+        border-radius: 5px;
     }
 
     span {
-        font-size: 1.2em;
+        font-size: 1.1em;
+        display: block;
     }
 </style>

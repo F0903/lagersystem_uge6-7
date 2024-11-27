@@ -10,7 +10,8 @@ export function getAttributesOfProductType(typ: string) {
         case "Book":
             return Book.getAttributeNames();
         default:
-            throw new Error(`Unknown product type: ${typ}`);
+            // Don't throw here, instead return empty so the placeholder works.
+            return [];
     }
 }
 
