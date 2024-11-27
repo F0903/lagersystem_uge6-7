@@ -40,7 +40,7 @@
     }
 
     .attr-container.editable {
-        border: 2px dashed var(--secondary-color);
+        border-color: hsl(16, 65%, 40%);
     }
 
     .attr-container {
@@ -48,6 +48,9 @@
         margin: 5px 0px;
         padding: 10px;
 
+        border-width: 2px;
+        border-style: dashed;
+        border-color: transparent;
         border-radius: 5px;
     }
 
