@@ -2,8 +2,11 @@ import logging
 from typing import Any
 from flask import Flask, Request, jsonify, request, Response
 from flask_cors import CORS
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required
+
 from ..models.products import Product
 from ..db.adapters.product_adapter import ProductAdapter
+from ..db.adapters.user_adapter import UserAdapter
 from ..db.db_connection import DbConnection
 from ..db.db_product import DatabaseProduct
 from ..db import error as db_err
@@ -13,7 +16,13 @@ LOG = logging.getLogger(__name__)
 
 api = Flask(__name__)
 api.json.sort_keys = False
+
+# CORS (i hate this)
 CORS(api)
+
+# Setup the Flask-JWT-Extended extension
+api.config["JWT_SECRET_KEY"] = "super-secret"  # Change this!
+jwt = JWTManager(api)
 
 
 def _validate_product_request_fields(
@@ -49,7 +58,25 @@ def _validate_product_request(request: Request) -> tuple[Response, int] | dict:
     return product_data
 
 
+@api.route("/api/login", methods=["POST"])
+def login():
+    json = request.get_json()
+    username = json["Username"]
+    password = json["Password"]
+
+    db = DbConnection()
+    user_adapter = UserAdapter(db)
+
+    user = user_adapter.get_user_by_username(username)
+    if not user.is_password_match(password):
+        return jsonify({"error": "Bad username or password."}), 401
+
+    token = create_access_token(identity=username)
+    return jsonify(token=token)
+
+
 @api.route("/api/products", methods=["GET"])
+@jwt_required()
 def get_products() -> list[DatabaseProduct]:
     LOG.debug(f"Received get products request: {request}")
 
@@ -67,6 +94,7 @@ def get_products() -> list[DatabaseProduct]:
 
 
 @api.route("/api/product/<int:id>", methods=["GET"])
+@jwt_required()
 def get_product(id: int):
     LOG.debug(f"Received get product request: {request}")
 
@@ -82,6 +110,7 @@ def get_product(id: int):
 
 
 @api.route("/api/product", methods=["POST"])
+@jwt_required()
 def add_product():
     """
     Insert a product defined by the body of this request.
@@ -110,6 +139,7 @@ def add_product():
 
 
 @api.route("/api/product/<int:id>", methods=["PUT"])
+@jwt_required()
 def set_product(id: int):
     """
     Replace a particular product by ID with the body of this request.
@@ -138,6 +168,7 @@ def set_product(id: int):
 
 
 @api.route("/api/product/<int:id>", methods=["DELETE"])
+@jwt_required()
 def delete_product(id: int):
     LOG.debug(f"Received delete product request: {request}")
 

@@ -1,4 +1,3 @@
-
 # volumes: (so the database can persist between docker restarts)
 
 services:
@@ -11,6 +10,8 @@ services:
     volumes:
       - db-volume:/var/lib/mysql
   app:
+    depends_on:
+      - db
     restart: unless-stopped
     build: .
     ports:
@@ -23,6 +24,13 @@ services:
       DB_PASSWORD: root
       DB_HOST: db
       DB_PORT: 3306
+      JWT_SECRET_FILE: /run/secrets/jwt_secret
+    secrets:
+      - jwt_secret
+
+secrets:
+  jwt_secret:
+    file: jwt_secret.txt
 
 volumes:
   db-volume:
