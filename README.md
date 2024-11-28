@@ -1,6 +1,6 @@
 # SPAC-week6-7
 
-Week 6 and 7 assignment
+Week 6 and 7 assignment and frontend week 8 assignment
 
 ## to do the docker thing
 
