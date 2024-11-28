@@ -1,13 +1,41 @@
 <script lang="ts">
+    import { invalidateAll } from "$app/navigation";
+    import { page } from "$app/stores";
+    import { logout } from "$lib/api/auth_api";
+    import IconButton from "$lib/IconButton.svelte";
+    import { faDoorOpen } from "@fortawesome/free-solid-svg-icons";
+
     let { children } = $props();
+
+    async function logoutButton() {
+        await logout();
+        await invalidateAll();
+    }
 </script>
 
 <header>
     <h1 class="page-title">Lagerstyring</h1>
+    {#if $page.data.LoggedIn}
+        <div class="logout-wrapper">
+            <IconButton
+                fa_icon={faDoorOpen}
+                bg_color="var(--tertiary-color)"
+                onclick={logoutButton}
+                size="45px"
+            />
+        </div>
+    {/if}
 </header>
 {@render children()}
 
 <style>
+    .logout-wrapper {
+        position: absolute;
+        right: 0;
+        top: 0;
+        margin: 7px;
+    }
+
     .page-title {
         text-align: center;
         margin: 5px;

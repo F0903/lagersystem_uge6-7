@@ -7,4 +7,6 @@ export const load: PageServerLoad = async ({ cookies }) => {
     if (!token) {
         throw redirect(302, "/login");
     }
+
+    return { LoggedIn: true };
 };
