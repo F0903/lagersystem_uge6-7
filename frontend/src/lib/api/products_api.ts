@@ -1,9 +1,12 @@
 import { PUBLIC_BACKEND_URL } from "$env/static/public";
-import type { DatabaseProduct } from "./models/DatabaseProduct";
-import type { Product } from "./models/Product";
+import { getCookie } from "$lib/utils/cookie_utils";
+import type { DatabaseProduct } from "../models/DatabaseProduct";
+import type { Product } from "../models/Product";
 
 export async function getAllProducts(): Promise<DatabaseProduct[]> {
-    const resp = await fetch(`${PUBLIC_BACKEND_URL}/api/products`);
+    const resp = await fetch(`${PUBLIC_BACKEND_URL}/api/products`, {
+        credentials: "include",
+    });
     if (!resp.ok) {
         throw new Error(
             `Response was not OK. Response was:\n${resp.statusText}`
@@ -20,7 +23,9 @@ export async function getAllProducts(): Promise<DatabaseProduct[]> {
 }
 
 export async function getSingleProduct(id: number): Promise<DatabaseProduct> {
-    const resp = await fetch(`${PUBLIC_BACKEND_URL}/api/product/${id}`);
+    const resp = await fetch(`${PUBLIC_BACKEND_URL}/api/product/${id}`, {
+        credentials: "include",
+    });
     if (!resp.ok) {
         throw new Error(
             `Response was not OK. Response was:\n${resp.statusText}`
@@ -50,7 +55,10 @@ export async function setSingleProduct(
         body: JSON.stringify(productTypePair),
         headers: {
             "Content-Type": "application/json",
+            // We need a CSRF token for state changing methods.
+            "X-CSRF-TOKEN": getCookie("csrf_access_token"),
         },
+        credentials: "include",
     });
     if (!resp.ok) {
         throw new Error(
@@ -71,7 +79,10 @@ export async function addSingleProduct(product: Product, product_type: string) {
         body: JSON.stringify(productTypePair),
         headers: {
             "Content-Type": "application/json",
+            // We need a CSRF token for state changing methods.
+            "X-CSRF-TOKEN": getCookie("csrf_access_token"),
         },
+        credentials: "include",
     });
     if (!resp.ok) {
         throw new Error(
@@ -83,6 +94,11 @@ export async function addSingleProduct(product: Product, product_type: string) {
 export async function deleteSingleProduct(id: number) {
     const resp = await fetch(`${PUBLIC_BACKEND_URL}/api/product/${id}`, {
         method: "DELETE",
+        headers: {
+            // We need a CSRF token for state changing methods.
+            "X-CSRF-TOKEN": getCookie("csrf_access_token"),
+        },
+        credentials: "include",
     });
     if (!resp.ok) {
         throw new Error(

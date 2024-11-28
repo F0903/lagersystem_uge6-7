@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { addSingleProduct } from "./api";
+    import { addSingleProduct } from "./api/products_api";
     import {
         getAttributesOfProductType,
         product_types,
@@ -8,7 +8,10 @@
     import { faPlus, faArrowRight } from "@fortawesome/free-solid-svg-icons";
     import IconButton from "./IconButton.svelte";
     import Dropdown from "../Dropdown.svelte";
-    import { findParentWithTag } from "./dom_utils";
+    import {
+        findParentWithTag,
+        getObjectFromFormData,
+    } from "./utils/dom_utils";
 
     let { addProductCallback }: { addProductCallback: () => Promise<void> } =
         $props();
@@ -21,22 +24,12 @@
     }
 
     async function submit(event: Event) {
-        let target = event.target as HTMLElement;
+        event.preventDefault();
 
-        console.log(target);
+        let form = findParentWithTag("form", event.target as HTMLElement);
+        const product = getObjectFromFormData<Product>(form as HTMLFormElement);
 
-        let form = findParentWithTag("form", target);
-
-        // Construct form data from the form html element.
-        const formData = new FormData(form as HTMLFormElement);
-        console.log(formData);
-
-        // Get the entries in the form data wrapped in an object, so we can serialize it to JSON correctly
-        const productEntries = Object.fromEntries(
-            formData,
-        ) as unknown as Product; // This is a little hacky, but we know that we only add valid fields beforehand.
-
-        await addSingleProduct(productEntries, selectedType);
+        await addSingleProduct(product, selectedType);
         await addProductCallback();
     }
 </script>

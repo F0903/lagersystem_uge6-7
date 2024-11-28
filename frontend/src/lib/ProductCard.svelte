@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { deleteSingleProduct, setSingleProduct } from "./api";
+    import { deleteSingleProduct, setSingleProduct } from "./api/products_api";
     import IconButton from "./IconButton.svelte";
     import type { DatabaseProduct } from "./models/DatabaseProduct";
     import { constructProductFromAttributeList } from "./models/Product";

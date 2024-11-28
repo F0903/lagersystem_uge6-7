@@ -10,5 +10,5 @@ class User:
     IsAdmin: bool
 
     def is_password_match(self, plain_password: str) -> bool:
-        hashed_password = sha256(plain_password)
+        hashed_password = sha256(plain_password.encode("utf-8")).hexdigest()
         return self.PasswordHash == hashed_password

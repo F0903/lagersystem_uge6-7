@@ -1,17 +1,17 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { getAllProducts } from "./api";
+    import { getAllProducts } from "./api/products_api";
     import type { DatabaseProduct } from "./models/DatabaseProduct";
     import ProductCard from "./ProductCard.svelte";
     import ProductCreator from "./ProductCreator.svelte";
     import IconButton from "./IconButton.svelte";
     import { faRefresh } from "@fortawesome/free-solid-svg-icons";
 
-    let products: DatabaseProduct[] = $state([]);
+    let products: Promise<DatabaseProduct[]> = $state(Promise.resolve([]));
 
     async function loadProducts() {
         console.log("loading products...");
-        products = await getAllProducts();
+        products = getAllProducts();
     }
 
     async function addProductCallback() {
@@ -21,7 +21,7 @@
 
     async function refresh() {
         // Completely refresh from scratch
-        products = [];
+        products = Promise.resolve([]);
         await loadProducts();
     }
 
@@ -41,16 +41,21 @@
         />
     </header>
 
-    <div class="products-container">
-        {#await products}
-            <span>loading...</span>
-        {:then products}
+    {#await products}
+        <span>loading...</span>
+    {:then products}
+        <ProductCreator {addProductCallback} />
+        <div class="products-container">
             {#each products as db_product}
                 <ProductCard {db_product} />
             {/each}
-        {/await}
-    </div>
-    <ProductCreator {addProductCallback} />
+        </div>
+    {:catch err}
+        <div class="error">
+            <h3>Error while loading products!</h3>
+            <p>{err.message}</p>
+        </div>
+    {/await}
 </div>
 
 <style>
