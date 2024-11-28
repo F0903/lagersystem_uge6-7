@@ -45,7 +45,8 @@
     <IconButton
         custom_class="creator-button"
         click_toggle_class="enabled"
-        margin="25px"
+        margin="40px"
+        size="65px"
         fa_icon={faPlus}
         onclick={onCreatorButtonClick}
     />

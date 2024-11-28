@@ -71,7 +71,8 @@
 
     .title {
         text-align: center;
-        margin: 10px 0px;
+        font-size: 1.6em;
+        margin: 5px;
     }
 
     .products-widget {
