@@ -7,7 +7,7 @@
     } from "./models/Product";
     import { faPlus, faArrowRight } from "@fortawesome/free-solid-svg-icons";
     import IconButton from "./IconButton.svelte";
-    import Dropdown from "../Dropdown.svelte";
+    import Dropdown from "./Dropdown.svelte";
     import {
         findParentWithTag,
         getObjectFromFormData,
