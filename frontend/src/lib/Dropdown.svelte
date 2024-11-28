@@ -21,10 +21,12 @@
 
 <style>
     select {
-        background-color: var(--secondary-color);
-        border: none;
-        padding: 10px;
+        background-color: var(--bg-color, var(--tertiary-color));
+        border: 5px solid var(--bg-color, var(--tertiary-color));
+        border-radius: 5px;
+        padding: 7px;
         color: var(--primary-text-color);
-        font-weight: 800;
+        font-weight: 600;
+        font-size: var(--font-size, 0.95em);
     }
 </style>

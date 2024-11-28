@@ -6,6 +6,7 @@
     import ProductCreator from "./ProductCreator.svelte";
     import IconButton from "./IconButton.svelte";
     import { faRefresh } from "@fortawesome/free-solid-svg-icons";
+    import InputField from "./InputField.svelte";
 
     let products: Promise<DatabaseProduct[]> = $state(Promise.resolve([]));
 

@@ -64,7 +64,10 @@
 
         --primary-text-color: var(--quaternary-color);
 
+        --error-color: hsl(0, 58%, 38%);
+
         background-color: var(--primary-color);
+
         color: var(--primary-text-color);
         font-family: "Roboto Flex Variable", sans-serif;
     }

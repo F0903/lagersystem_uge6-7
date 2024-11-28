@@ -1,8 +1,9 @@
 <script lang="ts">
-    import { enhance } from "$app/forms";
     import { goto } from "$app/navigation";
     import { login } from "$lib/api/auth_api";
+    import ErrorBox from "$lib/ErrorBox.svelte";
     import IconButton from "$lib/IconButton.svelte";
+    import InputField from "$lib/InputField.svelte";
     import type { User } from "$lib/models/User";
     import {
         findParentWithTag,
@@ -10,12 +11,12 @@
     } from "$lib/utils/dom_utils";
     import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 
-    let error: Error | undefined = $state();
+    let error: Error | null = $state(null);
 
     async function submit(event: Event) {
         event.preventDefault();
 
-        error = undefined;
+        error = null;
 
         let form = findParentWithTag("form", event.target as HTMLElement);
         const user = getObjectFromFormData<User>(form as HTMLFormElement);
@@ -30,18 +31,23 @@
 </script>
 
 <div class="login-container">
+    <h2>Login</h2>
     <form class="creator-form" action="">
-        <label for="Username">Username</label>
-        <input type="text" name="Username" />
-        <label for="Password">Password</label>
-        <input type="password" name="Password" />
-        <IconButton fa_icon={faArrowRight} onclick={submit} margin="5px" />
+        <InputField name="Username" has_input_error={error != null} />
+        <InputField
+            name="Password"
+            input_type="password"
+            has_input_error={error != null}
+        />
+        <IconButton
+            fa_icon={faArrowRight}
+            onclick={submit}
+            margin="5px"
+            bg_color="var(--tertiary-color)"
+        />
     </form>
     {#if error}
-        <div class="login-error">
-            <h2>Error!</h2>
-            <p>{error.message}</p>
-        </div>
+        <ErrorBox message={error.message} />
     {/if}
 </div>
 
@@ -49,7 +55,6 @@
     .creator-form {
         display: flex;
         flex-direction: column;
-        max-width: 20%;
         gap: 15px;
         justify-content: center;
         align-items: center;
@@ -60,9 +65,15 @@
         flex-direction: column;
         align-items: center;
 
-        width: 100%;
+        width: fit-content;
         height: 100%;
 
+        border-radius: 10px;
         margin-top: 20vh;
+        padding: 15px;
+        margin-left: auto;
+        margin-right: auto;
+
+        background-color: var(--secondary-color);
     }
 </style>
