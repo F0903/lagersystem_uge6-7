@@ -28,7 +28,7 @@ api = Flask(__name__)
 api.json.sort_keys = False
 
 # CORS (i hate this)
-CORS(api)
+CORS(api, supports_credentials=True)
 
 # Setup the Flask-JWT-Extended extension
 api.config["JWT_SECRET_KEY"] = read_file_as_str(os.environ["JWT_SECRET_FILE"])
